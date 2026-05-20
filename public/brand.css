@@ -1,0 +1,391 @@
+:root {
+  --brand-red: #a70721;
+  --brand-gold: #ffc94a;
+  --brand-blue: #1e7bd7;
+  --surface: rgba(17, 21, 28, 0.9);
+  --surface-strong: rgba(21, 27, 36, 0.96);
+  --line: rgba(255, 255, 255, 0.14);
+}
+
+body {
+  font-family: Arial, "Noto Sans Thai", sans-serif;
+  background:
+    radial-gradient(circle at 13% 10%, rgba(255, 201, 74, 0.18), transparent 27%),
+    radial-gradient(circle at 88% 12%, rgba(30, 123, 215, 0.22), transparent 30%),
+    linear-gradient(135deg, #090b10 0%, #151923 46%, #0d1018 100%) !important;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.65), transparent 78%);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.65), transparent 78%);
+}
+
+body > * {
+  position: relative;
+  z-index: 1;
+}
+
+.panel,
+.box {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line) !important;
+  border-radius: 8px !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.025)),
+    var(--surface-strong) !important;
+  box-shadow: 0 24px 75px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+.panel::before,
+.box::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 5px;
+  background: linear-gradient(90deg, var(--brand-red), var(--brand-gold), var(--brand-blue));
+}
+
+.brand-strip {
+  display: grid;
+  grid-template-columns: minmax(190px, 1.15fr) minmax(210px, 1.1fr) minmax(112px, 0.65fr);
+  align-items: center;
+  gap: 22px;
+  margin-bottom: 22px;
+  padding: 14px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.brand-logo {
+  width: min(100%, 260px);
+  max-height: 132px;
+  object-fit: contain;
+  justify-self: start;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.38));
+}
+
+.brand-seal {
+  width: clamp(104px, 13vw, 132px);
+  max-height: 132px;
+  object-fit: contain;
+  justify-self: end;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.42));
+}
+
+.event-title {
+  min-width: 0;
+  text-align: center;
+}
+
+.event-title strong {
+  display: block;
+  color: #fff8d6;
+  font-size: clamp(20px, 3vw, 34px);
+  line-height: 1;
+}
+
+.event-title span {
+  display: block;
+  margin-top: 6px;
+  color: #9fd6ff;
+  font-size: clamp(12px, 1.7vw, 18px);
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.top-row h1,
+body > h1 {
+  color: #ffffff;
+  text-shadow: 0 0 18px rgba(255, 201, 74, 0.22);
+}
+
+.team-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.team-tag::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 18px var(--accent);
+}
+
+.score {
+  border-color: var(--accent-dark, rgba(255, 201, 74, 0.3)) !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.015)),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04), transparent 35%, rgba(255, 255, 255, 0.04)) !important;
+  box-shadow: inset 0 0 35px rgba(255, 255, 255, 0.04), 0 0 28px rgba(255, 255, 255, 0.06) !important;
+}
+
+.time {
+  border: 1px solid rgba(255, 201, 74, 0.25);
+  box-shadow: inset 0 0 24px rgba(255, 201, 74, 0.08);
+}
+
+button {
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 8px !important;
+  text-transform: uppercase;
+}
+
+.control-shell {
+  width: min(100%, 980px);
+  margin: 0 auto;
+}
+
+.control-shell .brand-strip {
+  margin-bottom: 18px;
+}
+
+.control-shell h1 {
+  margin: 0 0 18px;
+  font-size: clamp(34px, 5vw, 58px);
+  line-height: 1;
+}
+
+.control-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.control-grid .box:first-child {
+  grid-column: 1 / -1;
+}
+
+.score-row {
+  flex-wrap: wrap;
+}
+
+.score-row .team-score {
+  min-width: 220px;
+  padding: 16px 18px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.score-row .team-score span {
+  color: var(--brand-gold);
+  font-weight: 900;
+}
+
+.box h2 {
+  margin-top: 8px;
+  color: #fff8d6;
+}
+
+body:has(.panel) {
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow: hidden;
+  padding: clamp(8px, 2vh, 18px);
+}
+
+body:has(.panel) .panel {
+  width: min(100%, 1120px);
+  height: calc(100dvh - clamp(8px, 2vh, 18px) * 2);
+  max-height: 920px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto auto;
+  column-gap: clamp(16px, 2.4vw, 28px);
+  row-gap: clamp(8px, 1.8vh, 14px);
+  padding: clamp(12px, 2.4vh, 24px);
+}
+
+body:has(.panel) .brand-strip {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+  padding: clamp(8px, 1.6vh, 12px);
+  grid-template-columns: minmax(230px, 1fr) minmax(260px, 0.9fr) minmax(110px, 0.45fr);
+}
+
+body:has(.panel) .brand-logo {
+  width: min(100%, clamp(220px, 34vh, 320px));
+  max-height: clamp(70px, 17vh, 116px);
+}
+
+body:has(.panel) .brand-seal {
+  width: clamp(76px, 15vh, 112px);
+  max-height: clamp(76px, 15vh, 112px);
+}
+
+body:has(.panel) .top-row {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+}
+
+body:has(.panel) h1 {
+  font-size: clamp(32px, 6vh, 44px);
+}
+
+body:has(.panel) .status {
+  font-size: clamp(18px, 3vh, 22px);
+  padding: clamp(8px, 1.4vh, 10px) 16px;
+}
+
+body:has(.panel) .score {
+  grid-column: 1;
+  grid-row: 3 / 7;
+  align-self: stretch;
+  min-height: 0;
+  margin: 0;
+  font-size: clamp(104px, 24vh, 220px);
+}
+
+body:has(.panel) .time {
+  grid-column: 2;
+  grid-row: 3;
+  margin: 0;
+  padding: clamp(8px, 1.6vh, 12px);
+  font-size: clamp(52px, 11vh, 92px);
+}
+
+body:has(.panel) .timer-grid {
+  grid-column: 2;
+  grid-row: 4;
+  gap: clamp(8px, 1.4vh, 12px);
+  margin-bottom: 0;
+}
+
+body:has(.panel) .button-grid {
+  grid-column: 2;
+  grid-row: 5;
+  gap: clamp(8px, 1.4vh, 12px);
+  margin-top: 0;
+}
+
+body:has(.panel) button {
+  min-height: clamp(46px, 8vh, 76px);
+  font-size: clamp(22px, 4.2vh, 34px);
+}
+
+body:has(.panel) .reset {
+  grid-column: 2;
+  grid-row: 6;
+  min-height: clamp(44px, 7vh, 64px);
+  margin-top: 0;
+  font-size: clamp(18px, 3.2vh, 24px);
+}
+
+@media (max-width: 860px) {
+  body:has(.panel) .panel {
+    width: min(100%, 760px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  body:has(.panel) .score {
+    flex: 1 1 130px;
+    font-size: clamp(72px, 18vh, 128px);
+  }
+}
+
+@media (max-height: 620px) {
+  body:has(.panel) .brand-strip {
+    grid-template-columns: minmax(160px, 1fr) minmax(150px, 0.8fr) minmax(66px, 0.35fr);
+    gap: 10px;
+  }
+
+  body:has(.panel) .event-title strong {
+    font-size: clamp(18px, 5vh, 26px);
+  }
+
+  body:has(.panel) .event-title span {
+    font-size: clamp(11px, 2.7vh, 14px);
+    margin-top: 3px;
+  }
+}
+
+@media (max-height: 500px) {
+  body:has(.panel) .brand-strip {
+    grid-template-columns: minmax(126px, 1fr) minmax(104px, 0.65fr) minmax(52px, 0.32fr);
+  }
+
+  body:has(.panel) .brand-logo {
+    max-height: 58px;
+  }
+
+  body:has(.panel) .brand-seal {
+    width: 58px;
+    max-height: 58px;
+  }
+
+  body:has(.panel) .top-row {
+    margin-bottom: 6px;
+  }
+
+  body:has(.panel) .score,
+  body:has(.panel) .time,
+  body:has(.panel) .timer-grid {
+    margin-bottom: 6px;
+  }
+
+  body:has(.panel) .button-grid,
+  body:has(.panel) .timer-grid {
+    gap: 6px;
+  }
+
+  body:has(.panel) button {
+    min-height: 34px;
+    font-size: 18px;
+  }
+
+  body:has(.panel) .reset {
+    min-height: 34px;
+    margin-top: 6px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 720px) {
+  .brand-strip {
+    grid-template-columns: 1fr auto;
+  }
+
+  .event-title {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .brand-logo {
+    max-width: 210px;
+  }
+
+  .control-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .brand-strip {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .brand-logo {
+    max-width: 190px;
+  }
+
+  .brand-seal {
+    width: 86px;
+  }
+}
