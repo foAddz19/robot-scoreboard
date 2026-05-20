@@ -2,62 +2,240 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Team B Score</title>
   <style>
+    :root {
+      --accent: #35b7ff;
+      --accent-dark: #124765;
+      --bg: #141414;
+      --panel: #222;
+      --panel-soft: #2d2d2d;
+      --text: #fff;
+      --muted: #bdbdbd;
+      --gold: #ffcc00;
+      --green: #18c964;
+      --red: #e53935;
+      --gray: #777;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
-      background: #111;
-      color: white;
+      background:
+        linear-gradient(135deg, rgba(53, 183, 255, 0.12), transparent 38%),
+        linear-gradient(225deg, rgba(255, 204, 0, 0.08), transparent 42%),
+        var(--bg);
+      color: var(--text);
       text-align: center;
-      padding: 30px;
+      min-height: 100vh;
+      margin: 0;
+      padding: 24px;
+      display: grid;
+      place-items: center;
+    }
+
+    .panel {
+      width: min(100%, 760px);
+      padding: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      background: rgba(34, 34, 34, 0.96);
+      box-shadow: 0 18px 55px rgba(0, 0, 0, 0.35);
+    }
+
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
     }
 
     h1 {
-      font-size: 48px;
+      font-size: 44px;
+      line-height: 1;
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    .status {
+      min-width: 112px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: var(--panel-soft);
+      color: var(--muted);
+      font-size: 22px;
+      font-weight: bold;
+      line-height: 1;
+    }
+
+    .status[data-state="RUNNING"] {
+      background: rgba(24, 201, 100, 0.18);
+      color: #50f091;
+    }
+
+    .status[data-state="FINISH"] {
+      background: rgba(229, 57, 53, 0.18);
+      color: #ff7a76;
     }
 
     .score {
-      font-size: 90px;
-      margin: 20px;
-      color: #00aaff;
+      min-height: 180px;
+      display: grid;
+      place-items: center;
+      margin: 0 0 18px;
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+      border: 2px solid var(--accent-dark);
+      color: var(--accent);
+      font-size: 128px;
+      font-weight: 900;
+      line-height: 1;
+      text-shadow: 0 0 24px rgba(53, 183, 255, 0.22);
+    }
+
+    .time {
+      margin: 0 0 24px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #171717;
+      color: var(--gold);
+      font-size: 72px;
+      font-weight: bold;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .timer-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
     }
 
     button {
-      font-size: 32px;
-      padding: 20px 35px;
-      margin: 10px;
+      width: 100%;
+      min-height: 82px;
       border: none;
-      border-radius: 12px;
+      border-radius: 8px;
+      color: white;
       cursor: pointer;
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1;
+      box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.22);
+      transition: transform 0.08s ease, filter 0.08s ease;
+    }
+
+    button:active {
+      transform: translateY(2px);
+      filter: brightness(0.92);
     }
 
     .plus {
-      background: #18c964;
-      color: white;
+      background: var(--green);
     }
 
     .minus {
-      background: #e53935;
-      color: white;
+      background: var(--red);
+    }
+
+    .start {
+      background: #2196f3;
+    }
+
+    .stop {
+      background: #f05a38;
+    }
+
+    .reset {
+      min-height: 70px;
+      margin-top: 16px;
+      background: var(--gray);
+      font-size: 26px;
+    }
+
+    @media (max-width: 560px) {
+      body {
+        padding: 14px;
+      }
+
+      .panel {
+        padding: 18px;
+      }
+
+      .top-row {
+        align-items: flex-start;
+      }
+
+      h1 {
+        font-size: 34px;
+      }
+
+      .status {
+        min-width: 96px;
+        font-size: 18px;
+      }
+
+      .score {
+        min-height: 142px;
+        font-size: 96px;
+      }
+
+      .time {
+        font-size: 54px;
+      }
+
+      button {
+        min-height: 68px;
+        font-size: 28px;
+      }
+
+      .reset {
+        min-height: 64px;
+        font-size: 22px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <h1>TEAM B</h1>
-  <div class="score" id="scoreB">0</div>
+  <main class="panel">
+    <div class="top-row">
+      <h1>TEAM B</h1>
+      <div class="status" id="status" data-state="STOP">STOP</div>
+    </div>
 
-  <div>
-    <button class="plus" onclick="addScore(5)">+5</button>
-    <button class="plus" onclick="addScore(10)">+10</button>
-    <button class="plus" onclick="addScore(20)">+20</button>
-  </div>
+    <div class="score" id="scoreB">0</div>
+    <div class="time" id="time">03:00</div>
 
-  <div>
-    <button class="minus" onclick="addScore(-5)">-5</button>
-    <button class="minus" onclick="addScore(-10)">-10</button>
-    <button class="minus" onclick="addScore(-20)">-20</button>
-  </div>
+    <div class="timer-grid">
+      <button class="start" onclick="startTime()">START</button>
+      <button class="stop" onclick="stopTime()">STOP</button>
+    </div>
+
+    <div class="button-grid">
+      <button class="plus" onclick="addScore(5)">+5</button>
+      <button class="plus" onclick="addScore(10)">+10</button>
+      <button class="plus" onclick="addScore(20)">+20</button>
+      <button class="minus" onclick="addScore(-5)">-5</button>
+      <button class="minus" onclick="addScore(-10)">-10</button>
+      <button class="minus" onclick="addScore(-20)">-20</button>
+    </div>
+
+    <button class="reset" onclick="resetScore()">RESET SCORE</button>
+  </main>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
@@ -70,8 +248,25 @@
       });
     }
 
+    function resetScore() {
+      socket.emit("reset-score");
+    }
+
+    function startTime() {
+      socket.emit("start-time");
+    }
+
+    function stopTime() {
+      socket.emit("stop-time");
+    }
+
     socket.on("update", (data) => {
+      const status = document.getElementById("status");
+
       document.getElementById("scoreB").innerText = data.scoreB;
+      document.getElementById("time").innerText = data.time;
+      status.innerText = data.status;
+      status.dataset.state = data.status;
     });
   </script>
 
