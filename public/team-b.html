@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Team B Score</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 30px;
+    }
+
+    h1 {
+      font-size: 48px;
+    }
+
+    .score {
+      font-size: 90px;
+      margin: 20px;
+      color: #00aaff;
+    }
+
+    button {
+      font-size: 32px;
+      padding: 20px 35px;
+      margin: 10px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .plus {
+      background: #18c964;
+      color: white;
+    }
+
+    .minus {
+      background: #e53935;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>TEAM B</h1>
+  <div class="score" id="scoreB">0</div>
+
+  <div>
+    <button class="plus" onclick="addScore(5)">+5</button>
+    <button class="plus" onclick="addScore(10)">+10</button>
+    <button class="plus" onclick="addScore(20)">+20</button>
+  </div>
+
+  <div>
+    <button class="minus" onclick="addScore(-5)">-5</button>
+    <button class="minus" onclick="addScore(-10)">-10</button>
+    <button class="minus" onclick="addScore(-20)">-20</button>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    function addScore(point) {
+      socket.emit("add-score", {
+        team: "B",
+        point: point
+      });
+    }
+
+    socket.on("update", (data) => {
+      document.getElementById("scoreB").innerText = data.scoreB;
+    });
+  </script>
+
+</body>
+</html>

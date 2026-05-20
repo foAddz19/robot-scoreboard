@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Control Scoreboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #202020;
+      color: white;
+      text-align: center;
+      padding: 25px;
+    }
+
+    h1 {
+      font-size: 42px;
+    }
+
+    .box {
+      background: #333;
+      padding: 20px;
+      border-radius: 15px;
+      margin: 15px auto;
+      max-width: 700px;
+    }
+
+    .score-row {
+      display: flex;
+      justify-content: center;
+      gap: 50px;
+      font-size: 40px;
+      margin: 20px;
+    }
+
+    .time {
+      font-size: 80px;
+      color: #ffcc00;
+    }
+
+    button {
+      font-size: 24px;
+      padding: 15px 25px;
+      margin: 8px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .green {
+      background: #18c964;
+      color: white;
+    }
+
+    .red {
+      background: #e53935;
+      color: white;
+    }
+
+    .blue {
+      background: #2196f3;
+      color: white;
+    }
+
+    .gray {
+      background: #777;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>ROBOT SCOREBOARD CONTROL</h1>
+
+  <div class="box">
+    <div class="score-row">
+      <div>TEAM A: <span id="scoreA">0</span></div>
+      <div>TEAM B: <span id="scoreB">0</span></div>
+    </div>
+
+    <div class="time" id="time">03:00</div>
+    <h2 id="status">STOP</h2>
+  </div>
+
+  <div class="box">
+    <h2>ตั้งเวลาแข่งขัน</h2>
+    <button class="blue" onclick="setTime(60)">1 นาที</button>
+    <button class="blue" onclick="setTime(120)">2 นาที</button>
+    <button class="blue" onclick="setTime(180)">3 นาที</button>
+  </div>
+
+  <div class="box">
+    <h2>ควบคุมเวลา</h2>
+    <button class="green" onclick="startTime()">เริ่ม</button>
+    <button class="red" onclick="stopTime()">หยุด</button>
+  </div>
+
+  <div class="box">
+    <h2>รีเซ็ต</h2>
+    <button class="gray" onclick="resetScore()">รีเซ็ตคะแนน</button>
+    <button class="red" onclick="resetAll()">รีเซ็ตทั้งหมด</button>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    function setTime(seconds) {
+      socket.emit("set-time", seconds);
+    }
+
+    function startTime() {
+      socket.emit("start-time");
+    }
+
+    function stopTime() {
+      socket.emit("stop-time");
+    }
+
+    function resetScore() {
+      socket.emit("reset-score");
+    }
+
+    function resetAll() {
+      socket.emit("reset-all");
+    }
+
+    socket.on("update", (data) => {
+      document.getElementById("scoreA").innerText = data.scoreA;
+      document.getElementById("scoreB").innerText = data.scoreB;
+      document.getElementById("time").innerText = data.time;
+      document.getElementById("status").innerText = data.status;
+    });
+  </script>
+
+</body>
+</html>
