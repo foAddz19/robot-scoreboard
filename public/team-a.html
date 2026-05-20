@@ -83,6 +83,11 @@
       color: #ff7a76;
     }
 
+    .status[data-state="NO_SERVER"] {
+      background: rgba(255, 204, 0, 0.18);
+      color: #ffe072;
+    }
+
     .score {
       min-height: 180px;
       display: grid;
@@ -141,6 +146,12 @@
     button:active {
       transform: translateY(2px);
       filter: brightness(0.92);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.48;
+      transform: none;
     }
 
     .plus {
@@ -221,53 +232,85 @@
     <div class="time" id="time">03:00</div>
 
     <div class="timer-grid">
-      <button class="start" onclick="startTime()">START</button>
-      <button class="stop" onclick="stopTime()">STOP</button>
+      <button class="start" id="startTimeButton">START</button>
+      <button class="stop" id="stopTimeButton">STOP</button>
     </div>
 
     <div class="button-grid">
-      <button class="plus" onclick="addScore(5)">+5</button>
-      <button class="plus" onclick="addScore(10)">+10</button>
-      <button class="plus" onclick="addScore(20)">+20</button>
-      <button class="minus" onclick="addScore(-5)">-5</button>
-      <button class="minus" onclick="addScore(-10)">-10</button>
-      <button class="minus" onclick="addScore(-20)">-20</button>
+      <button class="plus" data-score="5">+5</button>
+      <button class="plus" data-score="10">+10</button>
+      <button class="plus" data-score="20">+20</button>
+      <button class="minus" data-score="-5">-5</button>
+      <button class="minus" data-score="-10">-10</button>
+      <button class="minus" data-score="-20">-20</button>
     </div>
 
-    <button class="reset" onclick="resetScore()">RESET SCORE</button>
+    <button class="reset" id="resetScoreButton">RESET SCORE</button>
   </main>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    const socket = io();
+    const status = document.getElementById("status");
+    const buttons = document.querySelectorAll("button");
 
-    function addScore(point) {
+    function setButtonsEnabled(enabled) {
+      buttons.forEach((button) => {
+        button.disabled = !enabled;
+      });
+    }
+
+    function showOffline() {
+      status.innerText = "NO SERVER";
+      status.dataset.state = "NO_SERVER";
+      setButtonsEnabled(false);
+    }
+
+    function addScore(socket, point) {
       socket.emit("add-score", {
         team: "A",
         point: point
       });
     }
 
-    function resetScore() {
-      socket.emit("reset-score");
+    if (typeof io !== "function") {
+      showOffline();
+    } else {
+      const socket = io();
+
+      setButtonsEnabled(false);
+
+      document.getElementById("startTimeButton").addEventListener("click", () => {
+        socket.emit("start-time");
+      });
+
+      document.getElementById("stopTimeButton").addEventListener("click", () => {
+        socket.emit("stop-time");
+      });
+
+      document.getElementById("resetScoreButton").addEventListener("click", () => {
+        socket.emit("reset-score");
+      });
+
+      document.querySelectorAll("[data-score]").forEach((button) => {
+        button.addEventListener("click", () => {
+          addScore(socket, Number(button.dataset.score));
+        });
+      });
+
+      socket.on("connect", () => {
+        setButtonsEnabled(true);
+      });
+
+      socket.on("disconnect", showOffline);
+      socket.on("connect_error", showOffline);
+
+      socket.on("update", (data) => {
+        document.getElementById("scoreA").innerText = data.scoreA;
+        document.getElementById("time").innerText = data.time;
+        status.innerText = data.status;
+        status.dataset.state = data.status;
+      });
     }
-
-    function startTime() {
-      socket.emit("start-time");
-    }
-
-    function stopTime() {
-      socket.emit("stop-time");
-    }
-
-    socket.on("update", (data) => {
-      const status = document.getElementById("status");
-
-      document.getElementById("scoreA").innerText = data.scoreA;
-      document.getElementById("time").innerText = data.time;
-      status.innerText = data.status;
-      status.dataset.state = data.status;
-    });
   </script>
 
 </body>

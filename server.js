@@ -8,7 +8,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 app.use(express.static("public"));
 
@@ -16,6 +16,7 @@ let scoreA = 0;
 let scoreB = 0;
 
 let timeLeft = 180; // เริ่มต้น 3 นาที
+let matchDuration = 180;
 let timer = null;
 let status = "STOP";
 
@@ -53,6 +54,10 @@ function sendUpdate() {
 function startTimer() {
   if (timer !== null) return;
 
+  if (timeLeft <= 0) {
+    timeLeft = matchDuration;
+  }
+
   status = "RUNNING";
 
   timer = setInterval(() => {
@@ -81,12 +86,16 @@ function stopTimer() {
 }
 
 function resetTimer(seconds = 180) {
+  const nextTime = Number(seconds);
+  const safeTime = Number.isFinite(nextTime) && nextTime > 0 ? nextTime : 180;
+
   if (timer !== null) {
     clearInterval(timer);
     timer = null;
   }
 
-  timeLeft = seconds;
+  matchDuration = safeTime;
+  timeLeft = safeTime;
   status = "STOP";
   sendUpdate();
 }
