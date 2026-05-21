@@ -97,7 +97,7 @@
       background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
       border: 2px solid var(--accent-dark);
       color: var(--accent);
-      font-size: 128px;
+      font-size: 150px;
       font-weight: 900;
       line-height: 1;
       text-shadow: 0 0 24px rgba(0, 255, 153, 0.22);
@@ -113,6 +113,40 @@
       font-weight: bold;
       line-height: 1;
       font-variant-numeric: tabular-nums;
+    }
+
+    .time.final-warning {
+      color: #ff3434;
+      border-color: rgba(255, 52, 52, 0.7);
+      text-shadow: 0 0 24px rgba(255, 52, 52, 0.55);
+      animation: final-pulse 0.7s ease-in-out infinite alternate;
+    }
+
+    @keyframes final-pulse {
+      from {
+        filter: brightness(1);
+      }
+
+      to {
+        filter: brightness(1.25);
+      }
+    }
+
+    .shot-readout {
+      margin: 0 0 18px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255, 204, 0, 0.25);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff8d6;
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .shot-readout span {
+      color: var(--gold);
     }
 
     .button-grid {
@@ -170,6 +204,11 @@
       background: #f05a38;
     }
 
+    .end {
+      grid-column: 1 / -1;
+      background: #ff8a00;
+    }
+
     .reset {
       min-height: 70px;
       margin-top: 16px;
@@ -201,11 +240,15 @@
 
       .score {
         min-height: 142px;
-        font-size: 96px;
+        font-size: 112px;
       }
 
       .time {
         font-size: 54px;
+      }
+
+      .shot-readout {
+        font-size: 28px;
       }
 
       button {
@@ -220,14 +263,50 @@
     }
   </style>
   <link rel="stylesheet" href="/brand.css">
+  <style>
+    body.team-a-page:has(.panel) .top-row {
+      grid-column: 1;
+      grid-row: 2;
+      grid-template-columns: minmax(0, 1fr) auto;
+      column-gap: clamp(14px, 2vw, 20px);
+      padding: 0 clamp(16px, 2.5vw, 28px);
+      transform: translateY(clamp(10px, 1.8vh, 18px));
+    }
+
+    body.team-a-page:has(.panel) .status {
+      justify-self: end;
+      min-width: clamp(96px, 12vw, 128px);
+      text-align: center;
+    }
+
+    body.team-a-page:has(.panel) .team-tag {
+      justify-self: start;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 560px) {
+      body.team-a-page:has(.panel) .top-row {
+        grid-template-columns: 1fr;
+        row-gap: 8px;
+        height: auto;
+        overflow: visible;
+        transform: none;
+      }
+
+      body.team-a-page:has(.panel) .status,
+      body.team-a-page:has(.panel) .team-tag {
+        justify-self: center;
+      }
+    }
+  </style>
 </head>
-<body>
+<body class="team-a-page">
 
   <main class="panel">
     <div class="brand-strip">
       <img class="brand-logo" src="/assets/robot-contest-logo.png" alt="R-VEC Robot Contest">
       <div class="event-title">
-        <strong>ROBOT CONTEST</strong>
+        <strong>VEC Service Intelligence Robot</strong>
         <span>LIVE SCOREBOARD</span>
       </div>
       <img class="brand-seal" src="/assets/vec-seal.png" alt="Vocational Education Commission">
@@ -239,7 +318,8 @@
     </div>
 
     <div class="score" id="scoreA">0</div>
-    <div class="time" id="time">03:00</div>
+    <div class="time" id="time">00.00</div>
+    <div class="shot-readout">SHOT <span id="shotA">--.--</span></div>
 
     <div class="timer-grid">
       <button class="start" id="startTimeButton">START</button>
@@ -253,18 +333,26 @@
       <button class="minus" data-score="-5">-5</button>
       <button class="minus" data-score="-10">-10</button>
       <button class="minus" data-score="-20">-20</button>
+      <button class="end" id="endMatchButton">+20 END</button>
     </div>
 
-    <button class="reset" id="resetScoreButton">RESET SCORE</button>
+    <button class="reset" id="resetScoreButton">RESET SCORE / SHOT</button>
   </main>
 
   <script src="/socket.io/socket.io.js"></script>
+  <script src="/final-warning.js"></script>
   <script>
     const status = document.getElementById("status");
     const buttons = document.querySelectorAll("button");
 
     function setButtonsEnabled(enabled) {
       buttons.forEach((button) => {
+        button.disabled = !enabled;
+      });
+    }
+
+    function setScoreButtonsEnabled(enabled) {
+      document.querySelectorAll("[data-score], #endMatchButton").forEach((button) => {
         button.disabled = !enabled;
       });
     }
@@ -290,6 +378,7 @@
       setButtonsEnabled(false);
 
       document.getElementById("startTimeButton").addEventListener("click", () => {
+        if (typeof unlockWarningAudio === "function") unlockWarningAudio();
         socket.emit("start-time");
       });
 
@@ -299,6 +388,13 @@
 
       document.getElementById("resetScoreButton").addEventListener("click", () => {
         socket.emit("reset-score");
+      });
+
+      document.getElementById("endMatchButton").addEventListener("click", () => {
+        socket.emit("end-with-bonus", {
+          team: "A",
+          point: 20
+        });
       });
 
       document.querySelectorAll("[data-score]").forEach((button) => {
@@ -317,8 +413,12 @@
       socket.on("update", (data) => {
         document.getElementById("scoreA").innerText = data.scoreA;
         document.getElementById("time").innerText = data.time;
+        document.getElementById("shotA").innerText = data.shotA || "--.--";
         status.innerText = data.status;
         status.dataset.state = data.status;
+        document.getElementById("resetScoreButton").disabled = data.status === "RUNNING";
+        setScoreButtonsEnabled(data.status !== "FINISH" && data.shotA === "");
+        if (typeof applyFinalWarning === "function") applyFinalWarning(data);
       });
     }
   </script>

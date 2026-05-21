@@ -58,9 +58,9 @@ body > * {
 
 .brand-strip {
   display: grid;
-  grid-template-columns: minmax(190px, 1.15fr) minmax(210px, 1.1fr) minmax(112px, 0.65fr);
+  grid-template-columns: minmax(190px, 1fr) minmax(210px, auto) minmax(190px, 1fr);
   align-items: center;
-  gap: 22px;
+  gap: clamp(12px, 2vw, 22px);
   margin-bottom: 22px;
   padding: 14px 18px;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -200,14 +200,14 @@ body:has(.panel) {
 }
 
 body:has(.panel) .panel {
-  width: min(100%, 1120px);
+  width: min(100%, 1160px);
   height: calc(100dvh - clamp(8px, 2vh, 18px) * 2);
   max-height: 920px;
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
-  grid-template-rows: auto auto minmax(0, 1fr) auto auto auto;
-  column-gap: clamp(16px, 2.4vw, 28px);
-  row-gap: clamp(8px, 1.8vh, 14px);
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+  grid-template-rows: auto auto auto auto auto auto auto minmax(0, 1fr);
+  column-gap: clamp(18px, 2.8vw, 34px);
+  row-gap: clamp(8px, 1.5vh, 14px);
   padding: clamp(12px, 2.4vh, 24px);
 }
 
@@ -215,7 +215,7 @@ body:has(.panel) .brand-strip {
   grid-column: 1 / -1;
   margin-bottom: 0;
   padding: clamp(8px, 1.6vh, 12px);
-  grid-template-columns: minmax(230px, 1fr) minmax(260px, 0.9fr) minmax(110px, 0.45fr);
+  grid-template-columns: minmax(230px, 1fr) minmax(260px, auto) minmax(230px, 1fr);
 }
 
 body:has(.panel) .brand-logo {
@@ -230,7 +230,19 @@ body:has(.panel) .brand-seal {
 
 body:has(.panel) .top-row {
   grid-column: 1 / -1;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  align-self: start;
   margin-bottom: 0;
+  min-height: 0;
+  height: 0;
+  padding: 0;
+  border-bottom: 0;
+  overflow: visible;
+  transform: translateY(calc(-100% - clamp(4px, 1vh, 8px)));
+  z-index: 2;
 }
 
 body:has(.panel) h1 {
@@ -244,19 +256,38 @@ body:has(.panel) .status {
 
 body:has(.panel) .score {
   grid-column: 1;
-  grid-row: 3 / 7;
+  grid-row: 2 / -1;
   align-self: stretch;
   min-height: 0;
   margin: 0;
-  font-size: clamp(104px, 24vh, 220px);
+  border-width: 3px;
+  font-size: clamp(128px, 28vh, 260px);
 }
 
 body:has(.panel) .time {
   grid-column: 2;
-  grid-row: 3;
+  grid-row: 2;
+  display: grid;
+  place-items: center;
   margin: 0;
-  padding: clamp(8px, 1.6vh, 12px);
-  font-size: clamp(52px, 11vh, 92px);
+  align-self: start;
+  min-height: clamp(92px, 13vh, 118px);
+  padding: clamp(10px, 1.8vh, 14px);
+  font-size: clamp(54px, 9vh, 82px);
+  overflow: hidden;
+}
+
+body:has(.panel) .shot-readout {
+  grid-column: 2;
+  grid-row: 3;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  align-self: start;
+  min-height: clamp(66px, 9vh, 84px);
+  padding: clamp(10px, 1.4vh, 14px) 12px;
+  font-size: clamp(28px, 4vh, 36px);
+  overflow: hidden;
 }
 
 body:has(.panel) .timer-grid {
@@ -274,14 +305,14 @@ body:has(.panel) .button-grid {
 }
 
 body:has(.panel) button {
-  min-height: clamp(46px, 8vh, 76px);
-  font-size: clamp(22px, 4.2vh, 34px);
+  min-height: clamp(46px, 7.2vh, 70px);
+  font-size: clamp(20px, 3.8vh, 32px);
 }
 
 body:has(.panel) .reset {
   grid-column: 2;
   grid-row: 6;
-  min-height: clamp(44px, 7vh, 64px);
+  min-height: clamp(46px, 7.2vh, 66px);
   margin-top: 0;
   font-size: clamp(18px, 3.2vh, 24px);
 }
@@ -295,14 +326,74 @@ body:has(.panel) .reset {
 
   body:has(.panel) .score {
     flex: 1 1 130px;
-    font-size: clamp(72px, 18vh, 128px);
+    font-size: clamp(88px, 22vh, 150px);
   }
 }
 
 @media (max-height: 620px) {
+  body:has(.panel) {
+    padding: 8px;
+  }
+
+  body:has(.panel) .panel {
+    height: calc(100dvh - 16px);
+    row-gap: 6px;
+    padding: 10px;
+  }
+
   body:has(.panel) .brand-strip {
-    grid-template-columns: minmax(160px, 1fr) minmax(150px, 0.8fr) minmax(66px, 0.35fr);
+    grid-template-columns: minmax(160px, 1fr) minmax(150px, auto) minmax(160px, 1fr);
+    padding: 6px 10px;
     gap: 10px;
+  }
+
+  body:has(.panel) .brand-logo {
+    max-height: 64px;
+  }
+
+  body:has(.panel) .brand-seal {
+    width: 64px;
+    max-height: 64px;
+  }
+
+  body:has(.panel) h1 {
+    font-size: clamp(26px, 5vh, 34px);
+  }
+
+  body:has(.panel) .status {
+    font-size: clamp(14px, 2.6vh, 18px);
+    padding: 6px 12px;
+  }
+
+  body:has(.panel) .score {
+    font-size: clamp(92px, 25vh, 170px);
+  }
+
+  body:has(.panel) .time {
+    min-height: 68px;
+    padding: 6px 10px;
+    font-size: clamp(42px, 8vh, 58px);
+  }
+
+  body:has(.panel) .shot-readout {
+    min-height: 48px;
+    padding: 6px 10px;
+    font-size: clamp(22px, 4.2vh, 30px);
+  }
+
+  body:has(.panel) .timer-grid,
+  body:has(.panel) .button-grid {
+    gap: 6px;
+  }
+
+  body:has(.panel) button {
+    min-height: 36px;
+    font-size: 18px;
+  }
+
+  body:has(.panel) .reset {
+    min-height: 36px;
+    font-size: 16px;
   }
 
   body:has(.panel) .event-title strong {
@@ -316,43 +407,153 @@ body:has(.panel) .reset {
 }
 
 @media (max-height: 500px) {
+  body:has(.panel) {
+    padding: 6px;
+  }
+
+  body:has(.panel) .panel {
+    height: calc(100dvh - 12px);
+    row-gap: 4px;
+    padding: 8px;
+  }
+
   body:has(.panel) .brand-strip {
-    grid-template-columns: minmax(126px, 1fr) minmax(104px, 0.65fr) minmax(52px, 0.32fr);
+    grid-template-columns: minmax(126px, 1fr) minmax(104px, auto) minmax(126px, 1fr);
+    padding: 4px 8px;
   }
 
   body:has(.panel) .brand-logo {
-    max-height: 58px;
+    max-height: 44px;
   }
 
   body:has(.panel) .brand-seal {
-    width: 58px;
-    max-height: 58px;
+    width: 44px;
+    max-height: 44px;
   }
 
   body:has(.panel) .top-row {
-    margin-bottom: 6px;
+    padding: 0 0 4px;
   }
 
-  body:has(.panel) .score,
-  body:has(.panel) .time,
-  body:has(.panel) .timer-grid {
-    margin-bottom: 6px;
+  body:has(.panel) h1 {
+    font-size: clamp(22px, 5vh, 28px);
+  }
+
+  body:has(.panel) .status {
+    min-width: 78px;
+    font-size: clamp(12px, 2.8vh, 15px);
+    padding: 5px 9px;
+  }
+
+  body:has(.panel) .score {
+    font-size: clamp(74px, 24vh, 118px);
+  }
+
+  body:has(.panel) .time {
+    min-height: 50px;
+    padding: 4px 8px;
+    font-size: clamp(34px, 8vh, 44px);
+  }
+
+  body:has(.panel) .shot-readout {
+    min-height: 36px;
+    padding: 4px 8px;
+    font-size: clamp(18px, 4.6vh, 24px);
   }
 
   body:has(.panel) .button-grid,
   body:has(.panel) .timer-grid {
-    gap: 6px;
+    gap: 4px;
   }
 
   body:has(.panel) button {
-    min-height: 34px;
-    font-size: 18px;
+    min-height: 28px;
+    font-size: 15px;
   }
 
   body:has(.panel) .reset {
-    min-height: 34px;
-    margin-top: 6px;
-    font-size: 16px;
+    min-height: 28px;
+    font-size: 14px;
+  }
+}
+
+@media (max-height: 420px) {
+  body:has(.panel) {
+    padding: 4px;
+  }
+
+  body:has(.panel) .panel {
+    height: calc(100dvh - 8px);
+    row-gap: 3px;
+    padding: 6px;
+  }
+
+  body:has(.panel) .brand-strip {
+    padding: 3px 6px;
+    gap: 6px;
+  }
+
+  body:has(.panel) .brand-logo {
+    max-height: 34px;
+  }
+
+  body:has(.panel) .brand-seal {
+    width: 34px;
+    max-height: 34px;
+  }
+
+  body:has(.panel) .event-title strong {
+    font-size: 18px;
+  }
+
+  body:has(.panel) .event-title span {
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  body:has(.panel) .top-row {
+    padding: 0 0 3px;
+  }
+
+  body:has(.panel) h1 {
+    font-size: 20px;
+  }
+
+  body:has(.panel) .status {
+    min-width: 68px;
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  body:has(.panel) .score {
+    font-size: clamp(60px, 22vh, 96px);
+  }
+
+  body:has(.panel) .time {
+    min-height: 42px;
+    padding: 3px 8px;
+    font-size: clamp(28px, 8vh, 38px);
+  }
+
+  body:has(.panel) .shot-readout {
+    min-height: 30px;
+    padding: 3px 8px;
+    font-size: clamp(16px, 4.5vh, 20px);
+  }
+
+  body:has(.panel) .button-grid,
+  body:has(.panel) .timer-grid {
+    gap: 3px;
+  }
+
+  body:has(.panel) button {
+    min-height: 24px;
+    font-size: 13px;
+  }
+
+  body:has(.panel) .reset {
+    min-height: 24px;
+    font-size: 12px;
   }
 }
 

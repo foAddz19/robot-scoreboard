@@ -13,6 +13,7 @@
       --green: #18c964;
       --red: #e53935;
       --blue: #2196f3;
+      --orange: #ff8a00;
       --gray: #777777;
     }
 
@@ -55,6 +56,47 @@
       text-shadow: 0 0 24px rgba(255, 204, 0, 0.22);
     }
 
+    .time.final-warning {
+      color: #ff3434;
+      text-shadow: 0 0 24px rgba(255, 52, 52, 0.55);
+      animation: final-pulse 0.7s ease-in-out infinite alternate;
+    }
+
+    @keyframes final-pulse {
+      from {
+        filter: brightness(1);
+      }
+
+      to {
+        filter: brightness(1.25);
+      }
+    }
+
+    .shot-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin: 8px 0 4px;
+    }
+
+    .shot-readout {
+      min-width: 174px;
+      padding: 10px 14px;
+      border: 1px solid rgba(255, 204, 0, 0.25);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff8d6;
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .shot-readout span {
+      color: var(--gold);
+    }
+
     #status {
       display: inline-flex;
       min-width: 128px;
@@ -95,6 +137,12 @@
       filter: brightness(0.92);
     }
 
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.48;
+      transform: none;
+    }
+
     .green {
       background: var(--green);
     }
@@ -105,6 +153,10 @@
 
     .blue {
       background: var(--blue);
+    }
+
+    .orange {
+      background: var(--orange);
     }
 
     .gray {
@@ -147,7 +199,11 @@
           <div class="team-score">TEAM B: <span id="scoreB">0</span></div>
         </div>
 
-        <div class="time" id="time">03:00</div>
+        <div class="time" id="time">00.00</div>
+        <div class="shot-row">
+          <div class="shot-readout">SHOT A: <span id="shotA">--.--</span></div>
+          <div class="shot-readout">SHOT B: <span id="shotB">--.--</span></div>
+        </div>
         <h2 id="status">STOP</h2>
       </section>
 
@@ -171,14 +227,23 @@
       <section class="box">
         <h2>รีเซ็ต</h2>
         <div class="button-row">
-          <button class="gray" onclick="resetScore()">รีเซ็ตคะแนน</button>
+          <button class="gray" id="resetScoreButton" onclick="resetScore()">RESET SCORE / SHOT</button>
           <button class="red" onclick="resetAll()">รีเซ็ตทั้งหมด</button>
+        </div>
+      </section>
+
+      <section class="box">
+        <h2>จบเกม +20</h2>
+        <div class="button-row">
+          <button class="orange" id="endTeamA" onclick="endMatch('A')">TEAM A +20 END</button>
+          <button class="orange" id="endTeamB" onclick="endMatch('B')">TEAM B +20 END</button>
         </div>
       </section>
     </div>
   </main>
 
   <script src="/socket.io/socket.io.js"></script>
+  <script src="/final-warning.js"></script>
   <script>
     const socket = io();
 
@@ -187,6 +252,7 @@
     }
 
     function startTime() {
+      if (typeof unlockWarningAudio === "function") unlockWarningAudio();
       socket.emit("start-time");
     }
 
@@ -202,11 +268,24 @@
       socket.emit("reset-all");
     }
 
+    function endMatch(team) {
+      socket.emit("end-with-bonus", {
+        team: team,
+        point: 20
+      });
+    }
+
     socket.on("update", (data) => {
       document.getElementById("scoreA").innerText = data.scoreA;
       document.getElementById("scoreB").innerText = data.scoreB;
       document.getElementById("time").innerText = data.time;
+      document.getElementById("shotA").innerText = data.shotA || "--.--";
+      document.getElementById("shotB").innerText = data.shotB || "--.--";
       document.getElementById("status").innerText = data.status;
+      document.getElementById("resetScoreButton").disabled = data.status === "RUNNING";
+      document.getElementById("endTeamA").disabled = data.status === "FINISH" || data.shotA !== "";
+      document.getElementById("endTeamB").disabled = data.status === "FINISH" || data.shotB !== "";
+      if (typeof applyFinalWarning === "function") applyFinalWarning(data);
     });
   </script>
 </body>
