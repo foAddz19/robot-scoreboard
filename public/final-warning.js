@@ -9,16 +9,16 @@
   const finalWarningSeconds = 10;
   const warningAudioStartSeconds = 0;
   const warningAudioSources = [
+    "/assets/videoplayback.wav",
     "/assets/videoplayback.mp3",
     "/assets/videoplayback.m4a",
-    "/assets/videoplayback.wav",
     "/assets/videoplayback.ogg",
     "/assets/videoplayback.webm",
     "/assets/videoplayback.mp4",
     "/assets/videoplayback",
+    "/videoplayback.wav",
     "/videoplayback.mp3",
     "/videoplayback.m4a",
-    "/videoplayback.wav",
     "/videoplayback.ogg",
     "/videoplayback.webm",
     "/videoplayback.mp4",
