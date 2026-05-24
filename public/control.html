@@ -117,6 +117,30 @@
       gap: 10px;
     }
 
+    .quick-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: -6px 0 18px;
+    }
+
+    .quick-links a {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff8d6;
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1;
+      text-decoration: none;
+    }
+
     button {
       min-width: 126px;
       min-height: 62px;
@@ -191,12 +215,15 @@
     </div>
 
     <h1>ROBOT SCOREBOARD CONTROL</h1>
+    <nav class="quick-links" aria-label="Setup pages">
+      <a href="/team-names.html">TEAM NAME SETUP</a>
+    </nav>
 
     <div class="control-grid">
       <section class="box">
         <div class="score-row">
-          <div class="team-score">TEAM A: <span id="scoreA">0</span></div>
-          <div class="team-score">TEAM B: <span id="scoreB">0</span></div>
+          <div class="team-score"><span id="teamNameA">TEAM A</span>: <span id="scoreA">0</span></div>
+          <div class="team-score"><span id="teamNameB">TEAM B</span>: <span id="scoreB">0</span></div>
         </div>
 
         <div class="time" id="time">00.00</div>
@@ -278,6 +305,8 @@
     socket.on("update", (data) => {
       document.getElementById("scoreA").innerText = data.scoreA;
       document.getElementById("scoreB").innerText = data.scoreB;
+      document.getElementById("teamNameA").innerText = data.teamNameA || "TEAM A";
+      document.getElementById("teamNameB").innerText = data.teamNameB || "TEAM B";
       document.getElementById("time").innerText = data.time;
       document.getElementById("shotA").innerText = data.shotA || "--.--";
       document.getElementById("shotB").innerText = data.shotB || "--.--";

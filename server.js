@@ -16,6 +16,10 @@ let scoreA = 0;
 let scoreB = 0;
 let shotA = "";
 let shotB = "";
+let teamNames = ["TEAM A", "TEAM B"];
+let teamNameA = "TEAM A";
+let teamNameB = "TEAM B";
+let teamNamesVisible = true;
 
 let timeElapsed = 0;
 let matchDuration = 180;
@@ -26,6 +30,146 @@ const obsDir = path.join(__dirname, "obs");
 
 if (!fs.existsSync(obsDir)) {
   fs.mkdirSync(obsDir);
+}
+
+const teamDataFile = path.join(obsDir, "team-names.json");
+
+function cleanTeamName(value) {
+  return String(value || "").trim().replace(/\s+/g, " ").slice(0, 80);
+}
+
+function findTeamNameIndex(name) {
+  const cleanName = cleanTeamName(name).toLocaleLowerCase();
+  return teamNames.findIndex((teamName) => teamName.toLocaleLowerCase() === cleanName);
+}
+
+function addTeamNameToList(name) {
+  const cleanName = cleanTeamName(name);
+  if (!cleanName) return "";
+
+  const existingIndex = findTeamNameIndex(cleanName);
+  if (existingIndex === -1) {
+    teamNames.push(cleanName);
+    return cleanName;
+  }
+
+  return teamNames[existingIndex];
+}
+
+function normalizeTeamList(names) {
+  teamNames = [];
+
+  if (Array.isArray(names)) {
+    names.forEach((name) => addTeamNameToList(name));
+  }
+
+  if (teamNames.length === 0) {
+    teamNames = ["TEAM A", "TEAM B"];
+  }
+}
+
+function readTextFileIfExists(fileName) {
+  const filePath = path.join(obsDir, fileName);
+  if (!fs.existsSync(filePath)) return "";
+  return cleanTeamName(fs.readFileSync(filePath, "utf8"));
+}
+
+function loadTeamNameData() {
+  if (fs.existsSync(teamDataFile)) {
+    try {
+      const savedData = JSON.parse(fs.readFileSync(teamDataFile, "utf8"));
+      normalizeTeamList(savedData.teamNames);
+      teamNameA = cleanTeamName(savedData.teamNameA) || teamNames[0] || "TEAM A";
+      teamNameB = cleanTeamName(savedData.teamNameB) || teamNames[1] || teamNames[0] || "TEAM B";
+      teamNamesVisible = typeof savedData.teamNamesVisible === "boolean" ? savedData.teamNamesVisible : true;
+      teamNameA = addTeamNameToList(teamNameA);
+      teamNameB = addTeamNameToList(teamNameB);
+      return;
+    } catch (error) {
+      console.warn("Could not read team name data:", error.message);
+    }
+  }
+
+  const savedNameA = readTextFileIfExists("team-name-a.text");
+  const savedNameB = readTextFileIfExists("team-name-b.text");
+  teamNameA = addTeamNameToList(savedNameA || "TEAM A");
+  teamNameB = addTeamNameToList(savedNameB || "TEAM B");
+}
+
+function saveTeamNameData() {
+  const data = {
+    teamNames,
+    teamNameA,
+    teamNameB,
+    teamNamesVisible,
+  };
+
+  fs.writeFileSync(teamDataFile, JSON.stringify(data, null, 2));
+}
+
+function setTeamNamesVisible(visible) {
+  teamNamesVisible = Boolean(visible);
+  saveTeamNameData();
+  sendUpdate();
+}
+
+function setTeamName(team, name) {
+  const teamName = addTeamNameToList(name);
+  if (!teamName) return;
+
+  if (team === "A") {
+    teamNameA = teamName;
+  }
+
+  if (team === "B") {
+    teamNameB = teamName;
+  }
+
+  saveTeamNameData();
+  sendUpdate();
+}
+
+function editTeamName(oldName, newName) {
+  const cleanOldName = cleanTeamName(oldName);
+  const cleanNewName = cleanTeamName(newName);
+  const index = findTeamNameIndex(cleanOldName);
+
+  if (index === -1 || !cleanNewName) return;
+
+  const duplicateIndex = findTeamNameIndex(cleanNewName);
+  if (duplicateIndex !== -1 && duplicateIndex !== index) {
+    if (teamNameA === teamNames[index]) teamNameA = teamNames[duplicateIndex];
+    if (teamNameB === teamNames[index]) teamNameB = teamNames[duplicateIndex];
+    teamNames.splice(index, 1);
+  } else {
+    const previousName = teamNames[index];
+    teamNames[index] = cleanNewName;
+    if (teamNameA === previousName) teamNameA = cleanNewName;
+    if (teamNameB === previousName) teamNameB = cleanNewName;
+  }
+
+  saveTeamNameData();
+  sendUpdate();
+}
+
+function deleteTeamName(name) {
+  const cleanName = cleanTeamName(name);
+  const index = findTeamNameIndex(cleanName);
+  if (index === -1 || teamNames.length <= 1) return;
+
+  const deletedName = teamNames[index];
+  teamNames.splice(index, 1);
+
+  if (teamNameA === deletedName) {
+    teamNameA = teamNames.find((teamName) => teamName !== teamNameB) || teamNames[0] || "TEAM A";
+  }
+
+  if (teamNameB === deletedName) {
+    teamNameB = teamNames.find((teamName) => teamName !== teamNameA) || teamNames[0] || "TEAM B";
+  }
+
+  saveTeamNameData();
+  sendUpdate();
 }
 
 function formatTime(sec) {
@@ -41,6 +185,8 @@ function writeObsFiles() {
   fs.writeFileSync(path.join(obsDir, "shot_a.txt"), shotA);
   fs.writeFileSync(path.join(obsDir, "shot_b.txt"), shotB);
   fs.writeFileSync(path.join(obsDir, "status.txt"), status);
+  fs.writeFileSync(path.join(obsDir, "team-name-a.text"), teamNamesVisible ? teamNameA : "");
+  fs.writeFileSync(path.join(obsDir, "team-name-b.text"), teamNamesVisible ? teamNameB : "");
 }
 
 function sendUpdate() {
@@ -50,6 +196,10 @@ function sendUpdate() {
     scoreB,
     shotA,
     shotB,
+    teamNames,
+    teamNameA,
+    teamNameB,
+    teamNamesVisible,
     time: formatTime(timeElapsed),
     timeElapsed,
     matchDuration,
@@ -207,8 +357,37 @@ io.on("connection", (socket) => {
     resetTimer(180);
     sendUpdate();
   });
+
+  socket.on("team-name-add", (data) => {
+    if (addTeamNameToList(data && data.name)) {
+      saveTeamNameData();
+      sendUpdate();
+    }
+  });
+
+  socket.on("team-name-edit", (data) => {
+    editTeamName(data && data.oldName, data && data.newName);
+  });
+
+  socket.on("team-name-select", (data) => {
+    setTeamName(data && data.team, data && data.name);
+  });
+
+  socket.on("team-name-delete", (data) => {
+    deleteTeamName(data && data.name);
+  });
+
+  socket.on("team-names-show", () => {
+    setTeamNamesVisible(true);
+  });
+
+  socket.on("team-names-hide", () => {
+    setTeamNamesVisible(false);
+  });
 });
 
+loadTeamNameData();
+saveTeamNameData();
 writeObsFiles();
 
 server.listen(PORT, "0.0.0.0", () => {

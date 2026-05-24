@@ -281,7 +281,10 @@
 
     body.team-b-page:has(.panel) .team-tag {
       justify-self: start;
-      white-space: nowrap;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      text-align: left;
+      white-space: normal;
     }
 
     @media (max-width: 560px) {
@@ -315,7 +318,7 @@
     </div>
 
     <div class="top-row">
-      <h1 class="team-tag">TEAM B</h1>
+      <h1 class="team-tag" id="teamNameB">TEAM B</h1>
       <div class="status" id="status" data-state="STOP">STOP</div>
     </div>
 
@@ -414,6 +417,7 @@
 
       socket.on("update", (data) => {
         document.getElementById("scoreB").innerText = data.scoreB;
+        document.getElementById("teamNameB").innerText = data.teamNameB || "TEAM B";
         document.getElementById("time").innerText = data.time;
         document.getElementById("shotB").innerText = data.shotB || "--.--";
         status.innerText = data.status;

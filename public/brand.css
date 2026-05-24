@@ -2,6 +2,7 @@
   --brand-red: #a70721;
   --brand-gold: #ffc94a;
   --brand-blue: #1e7bd7;
+  --brand-seal-size: 160px;
   --surface: rgba(17, 21, 28, 0.9);
   --surface-strong: rgba(21, 27, 36, 0.96);
   --line: rgba(255, 255, 255, 0.14);
@@ -77,8 +78,8 @@ body > * {
 }
 
 .brand-seal {
-  width: clamp(104px, 13vw, 132px);
-  max-height: 132px;
+  width: clamp(104px, 13vw, var(--brand-seal-size));
+  max-height: var(--brand-seal-size);
   object-fit: contain;
   justify-self: end;
   filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.42));
@@ -224,8 +225,8 @@ body:has(.panel) .brand-logo {
 }
 
 body:has(.panel) .brand-seal {
-  width: clamp(76px, 15vh, 112px);
-  max-height: clamp(76px, 15vh, 112px);
+  width: clamp(76px, 15vh, var(--brand-seal-size));
+  max-height: clamp(76px, 15vh, var(--brand-seal-size));
 }
 
 body:has(.panel) .top-row {

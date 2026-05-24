@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Name Setup</title>
+  <style>
+    :root {
+      --bg: #141414;
+      --text: #ffffff;
+      --gold: #ffcc00;
+      --green: #18c964;
+      --blue: #2196f3;
+      --orange: #ff8a00;
+      --red: #e53935;
+      --muted: #d7dce4;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: clamp(14px, 2.2vw, 24px);
+      font-family: Arial, "Noto Sans Thai", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(30px, 4.4vw, 52px);
+      line-height: 1;
+    }
+
+    h2 {
+      margin: 0;
+      color: #fff8d6;
+      font-size: clamp(22px, 2.8vw, 30px);
+      line-height: 1.1;
+    }
+
+    label {
+      display: block;
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 17px;
+      font-weight: 800;
+      text-align: left;
+    }
+
+    select,
+    input {
+      width: 100%;
+      min-height: 56px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      font-size: clamp(18px, 2.2vw, 22px);
+      font-weight: 800;
+      outline: none;
+    }
+
+    option {
+      color: #111111;
+    }
+
+    button {
+      width: 100%;
+      min-height: 58px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 13px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      font-size: clamp(18px, 2.1vw, 22px);
+      font-weight: 900;
+      line-height: 1;
+      text-transform: uppercase;
+      box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.22);
+      transition: transform 0.08s ease, filter 0.08s ease;
+    }
+
+    button:active {
+      transform: translateY(2px);
+      filter: brightness(0.92);
+    }
+
+    button:disabled,
+    select:disabled,
+    input:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .setup-shell {
+      width: min(100%, 1080px);
+      margin: 0 auto;
+    }
+
+    .brand-strip {
+      margin-bottom: 14px;
+    }
+
+    .setup-shell .brand-strip {
+      padding-inline: clamp(14px, 1.5vw, 18px);
+    }
+
+    .setup-shell .brand-logo {
+      transform: translateX(-20%);
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .box {
+      padding: clamp(16px, 2.1vw, 22px);
+      margin: 0;
+    }
+
+    .wide {
+      grid-column: 1 / -1;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .status-panel {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .status-line {
+      min-height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.07);
+      color: #fff8d6;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .status-line[data-state="connected"] {
+      color: #50f091;
+    }
+
+    .status-line[data-state="offline"] {
+      color: #ff7a76;
+    }
+
+    .match-pickers {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .display-tools {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+      gap: 14px;
+      margin-top: 14px;
+      align-items: stretch;
+    }
+
+    .text-preview {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .text-preview-item {
+      display: grid;
+      align-content: center;
+      gap: 6px;
+      min-height: 70px;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      overflow-wrap: anywhere;
+    }
+
+    .text-preview-item span {
+      color: #9fd6ff;
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .text-preview-item strong {
+      color: #ffffff;
+      font-size: clamp(18px, 2vw, 24px);
+      line-height: 1.1;
+    }
+
+    .display-control-panel {
+      display: grid;
+      align-content: stretch;
+      gap: 10px;
+    }
+
+    .display-message {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 9px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff8d6;
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.15;
+      overflow-wrap: anywhere;
+    }
+
+    .display-message[data-state="visible"] {
+      color: #50f091;
+    }
+
+    .display-message[data-state="hidden"] {
+      color: #ffe072;
+    }
+
+    .display-message[data-state="offline"] {
+      color: #ff7a76;
+    }
+
+    .team-picker {
+      display: grid;
+      grid-template-rows: auto auto auto;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.055);
+    }
+
+    .current-team {
+      min-height: 92px;
+      display: grid;
+      align-content: center;
+      gap: 7px;
+      padding: 14px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.22);
+      overflow-wrap: anywhere;
+    }
+
+    .current-team span {
+      color: #9fd6ff;
+      font-size: 15px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .current-team strong {
+      font-size: clamp(24px, 3.2vw, 36px);
+      line-height: 1.08;
+    }
+
+    .form-stack {
+      display: grid;
+      gap: 12px;
+      height: 100%;
+      align-content: start;
+    }
+
+    .action-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .green {
+      background: var(--green);
+    }
+
+    .blue {
+      background: var(--blue);
+    }
+
+    .orange {
+      background: var(--orange);
+    }
+
+    .red {
+      background: var(--red);
+    }
+
+    @media (max-width: 760px) {
+      .setup-grid,
+      .match-pickers,
+      .display-tools,
+      .text-preview,
+      .action-row {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        display: grid;
+        justify-items: center;
+      }
+
+      .status-line {
+        white-space: normal;
+      }
+    }
+
+    @media (max-height: 700px) and (min-width: 900px) {
+      body {
+        padding: 10px;
+      }
+
+      .brand-strip {
+        padding: 8px 12px;
+      }
+
+      .brand-logo {
+        max-height: 65px;
+      }
+
+      .brand-seal {
+        width: var(--brand-seal-size);
+        max-height: var(--brand-seal-size);
+      }
+
+      h1 {
+        margin-bottom: 10px;
+        font-size: 36px;
+      }
+
+      .box {
+        padding: 14px;
+      }
+
+      .current-team {
+        min-height: 72px;
+      }
+
+      select,
+      input,
+      button {
+        min-height: 48px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="/brand.css">
+</head>
+<body>
+  <main class="setup-shell">
+    <div class="brand-strip">
+      <img class="brand-logo" src="/assets/vec-seal.png" alt="R-VEC Robot Contest">
+      <div class="event-title">
+        <strong>ROBOT CONTEST</strong>
+        <span>TEAM NAME SETUP</span>
+      </div>
+      <img class="brand-seal" src="/assets/robot-contest-logo.png" alt="Vocational Education Commission">
+    </div>
+
+    <h2>จัดการชื่อทีมแข่งขัน</h2>
+
+    <div class="setup-grid">
+      <section class="box wide">
+        <div class="section-head">
+          <h2>ทีมที่กำลังแข่ง</h2>
+          <div class="status-panel">
+            <div class="status-line" id="serverStatusLine" data-state="offline">SERVER: CONNECTING</div>
+          </div>
+        </div>
+
+        <div class="match-pickers">
+          <div class="team-picker">
+            <div class="current-team">
+              <span>TEAM A</span>
+              <strong id="currentTeamA">TEAM A</strong>
+            </div>
+            <label for="teamASelect">เลือกชื่อทีม A</label>
+            <select id="teamASelect"></select>
+          </div>
+
+          <div class="team-picker">
+            <div class="current-team">
+              <span>TEAM B</span>
+              <strong id="currentTeamB">TEAM B</strong>
+            </div>
+            <label for="teamBSelect">เลือกชื่อทีม B</label>
+            <select id="teamBSelect"></select>
+          </div>
+        </div>
+
+        <div class="display-tools">
+          <div class="text-preview">
+            <div class="text-preview-item">
+              <span>ชื่อทีม A</span>
+              <strong id="textPreviewA">TEAM A</strong>
+            </div>
+            <div class="text-preview-item">
+              <span>ชื่อทีม B</span>
+              <strong id="textPreviewB">TEAM B</strong>
+            </div>
+          </div>
+
+          <div class="display-control-panel">
+            <div class="action-row">
+              <button class="blue" id="showTeamNamesButton" type="button">แสดงชื่อทีม</button>
+              <button class="red" id="hideTeamNamesButton" type="button">หยุดแสดง</button>
+            </div>
+            <div class="display-message" id="messageLine">พร้อมใช้งาน</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="box">
+        <form class="form-stack" id="addTeamForm">
+          <h2>เพิ่มชื่อทีม</h2>
+          <label for="addTeamName">ชื่อทีมใหม่</label>
+          <input id="addTeamName" type="text" autocomplete="off" maxlength="80" placeholder="พิมพ์ชื่อทีม">
+          <button class="green" type="submit">เพิ่มทีม</button>
+        </form>
+      </section>
+
+      <section class="box">
+        <form class="form-stack" id="editTeamForm">
+          <h2>แก้ไข / ลบชื่อทีม</h2>
+          <label for="editTeamSelect">เลือกรายชื่อทีม</label>
+          <select id="editTeamSelect"></select>
+          <label for="editTeamName">แก้ไขชื่อ</label>
+          <input id="editTeamName" type="text" autocomplete="off" maxlength="80" placeholder="พิมพ์ชื่อใหม่">
+          <div class="action-row">
+            <button class="orange" type="submit">บันทึก</button>
+            <button class="red" id="deleteTeamButton" type="button">ลบทีม</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const teamASelect = document.getElementById("teamASelect");
+    const teamBSelect = document.getElementById("teamBSelect");
+    const editTeamSelect = document.getElementById("editTeamSelect");
+    const editTeamName = document.getElementById("editTeamName");
+    const addTeamName = document.getElementById("addTeamName");
+    const deleteTeamButton = document.getElementById("deleteTeamButton");
+    const showTeamNamesButton = document.getElementById("showTeamNamesButton");
+    const hideTeamNamesButton = document.getElementById("hideTeamNamesButton");
+    const serverStatusLine = document.getElementById("serverStatusLine");
+    const messageLine = document.getElementById("messageLine");
+    const controls = document.querySelectorAll("select, input, button");
+
+    let teamNames = ["TEAM A", "TEAM B"];
+    let teamNameA = "TEAM A";
+    let teamNameB = "TEAM B";
+    let teamNamesVisible = true;
+    let serverConnected = false;
+    let editIsDirty = false;
+
+    function cleanName(value) {
+      return String(value || "").trim().replace(/\s+/g, " ").slice(0, 80);
+    }
+
+    function setControlsEnabled(enabled) {
+      controls.forEach((control) => {
+        control.disabled = !enabled;
+      });
+
+      if (enabled) {
+        deleteTeamButton.disabled = teamNames.length <= 1;
+      }
+
+      updateDisplayButtons();
+    }
+
+    function setServerStatus(message, state) {
+      serverStatusLine.innerText = message;
+      serverStatusLine.dataset.state = state || "";
+    }
+
+    function showStatus(message, state) {
+      messageLine.innerText = message;
+      messageLine.dataset.state = state || "";
+    }
+
+    function updateDisplayStatus() {
+      if (teamNamesVisible) {
+        showStatus("กำลังแสดงชื่อทีม", "visible");
+      } else {
+        showStatus("หยุดแสดงแล้ว", "hidden");
+      }
+    }
+
+    function updateDisplayButtons() {
+      if (!serverConnected) {
+        showTeamNamesButton.disabled = true;
+        hideTeamNamesButton.disabled = true;
+        return;
+      }
+
+      showTeamNamesButton.disabled = teamNamesVisible;
+      hideTeamNamesButton.disabled = !teamNamesVisible;
+    }
+
+    function renderOptions(select, selectedName) {
+      const preferredValue = selectedName || select.value;
+      select.innerHTML = "";
+
+      teamNames.forEach((teamName) => {
+        const option = document.createElement("option");
+        option.value = teamName;
+        option.innerText = teamName;
+        select.appendChild(option);
+      });
+
+      if (preferredValue && teamNames.includes(preferredValue)) {
+        select.value = preferredValue;
+      } else {
+        select.value = teamNames[0] || "";
+      }
+    }
+
+    function render(data) {
+      teamNames = Array.isArray(data.teamNames) && data.teamNames.length
+        ? data.teamNames
+        : ["TEAM A", "TEAM B"];
+      teamNameA = data.teamNameA || "TEAM A";
+      teamNameB = data.teamNameB || "TEAM B";
+      teamNamesVisible = data.teamNamesVisible !== false;
+
+      document.getElementById("currentTeamA").innerText = teamNameA;
+      document.getElementById("currentTeamB").innerText = teamNameB;
+      document.getElementById("textPreviewA").innerText = teamNamesVisible ? teamNameA : "";
+      document.getElementById("textPreviewB").innerText = teamNamesVisible ? teamNameB : "";
+
+      renderOptions(teamASelect, teamNameA);
+      renderOptions(teamBSelect, teamNameB);
+      renderOptions(editTeamSelect, teamNames.includes(editTeamSelect.value) ? editTeamSelect.value : teamNames[0]);
+
+      if (!editIsDirty) {
+        editTeamName.value = editTeamSelect.value || "";
+      }
+
+      deleteTeamButton.disabled = teamNames.length <= 1;
+      updateDisplayStatus();
+      updateDisplayButtons();
+    }
+
+    if (typeof io !== "function") {
+      setServerStatus("SERVER: NO SERVER", "offline");
+      showStatus("ไม่เชื่อมต่อ server", "offline");
+      setControlsEnabled(false);
+    } else {
+      const socket = io();
+
+      setControlsEnabled(false);
+
+      socket.on("connect", () => {
+        serverConnected = true;
+        setServerStatus("SERVER: CONNECTED", "connected");
+        setControlsEnabled(true);
+      });
+
+      socket.on("disconnect", () => {
+        serverConnected = false;
+        setServerStatus("SERVER: NO SERVER", "offline");
+        showStatus("ไม่เชื่อมต่อ server", "offline");
+        setControlsEnabled(false);
+      });
+
+      socket.on("connect_error", () => {
+        serverConnected = false;
+        setServerStatus("SERVER: NO SERVER", "offline");
+        showStatus("ไม่เชื่อมต่อ server", "offline");
+        setControlsEnabled(false);
+      });
+
+      socket.on("update", (data) => {
+        render(data);
+      });
+
+      teamASelect.addEventListener("change", () => {
+        socket.emit("team-name-select", {
+          team: "A",
+          name: teamASelect.value
+        });
+        showStatus("เลือกทีม A แล้ว");
+      });
+
+      teamBSelect.addEventListener("change", () => {
+        socket.emit("team-name-select", {
+          team: "B",
+          name: teamBSelect.value
+        });
+        showStatus("เลือกทีม B แล้ว");
+      });
+
+      document.getElementById("addTeamForm").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const name = cleanName(addTeamName.value);
+        if (!name) {
+          showStatus("กรุณาพิมพ์ชื่อทีม");
+          return;
+        }
+
+        socket.emit("team-name-add", { name });
+        addTeamName.value = "";
+        showStatus("เพิ่มชื่อทีมแล้ว");
+      });
+
+      editTeamSelect.addEventListener("change", () => {
+        editIsDirty = false;
+        editTeamName.value = editTeamSelect.value || "";
+      });
+
+      editTeamName.addEventListener("input", () => {
+        editIsDirty = true;
+      });
+
+      document.getElementById("editTeamForm").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const oldName = editTeamSelect.value;
+        const newName = cleanName(editTeamName.value);
+        if (!oldName || !newName) {
+          showStatus("กรุณาเลือกทีมและพิมพ์ชื่อใหม่");
+          return;
+        }
+
+        socket.emit("team-name-edit", {
+          oldName,
+          newName
+        });
+        editIsDirty = false;
+        showStatus("บันทึกชื่อทีมแล้ว");
+      });
+
+      deleteTeamButton.addEventListener("click", () => {
+        const name = editTeamSelect.value;
+        if (!name || teamNames.length <= 1) {
+          showStatus("ต้องเหลือชื่อทีมอย่างน้อย 1 ทีม");
+          return;
+        }
+
+        if (!window.confirm(`ลบชื่อทีม "${name}" ?`)) return;
+
+        socket.emit("team-name-delete", { name });
+        editIsDirty = false;
+        showStatus("ลบชื่อทีมแล้ว");
+      });
+
+      showTeamNamesButton.addEventListener("click", () => {
+        socket.emit("team-names-show");
+        showStatus("กำลังแสดงชื่อทีม", "visible");
+      });
+
+      hideTeamNamesButton.addEventListener("click", () => {
+        socket.emit("team-names-hide");
+        showStatus("หยุดแสดงแล้ว", "hidden");
+      });
+    }
+  </script>
+</body>
+</html>
