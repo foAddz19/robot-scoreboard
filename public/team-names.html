@@ -288,6 +288,207 @@
       line-height: 1.08;
     }
 
+    .result-section {
+      text-align: left;
+    }
+
+    .result-board {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(150px, 0.55fr) minmax(0, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .live-score,
+    .live-clock {
+      min-height: 126px;
+      display: grid;
+      align-content: center;
+      gap: 7px;
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.22);
+    }
+
+    .live-score[data-side="A"] {
+      border-left: 5px solid var(--blue);
+    }
+
+    .live-score[data-side="B"] {
+      border-left: 5px solid var(--red);
+      text-align: right;
+    }
+
+    .live-score span,
+    .live-clock span {
+      color: #9fd6ff;
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .live-score em {
+      color: #fff8d6;
+      font-style: normal;
+    }
+
+    .live-score strong {
+      color: #ffffff;
+      font-size: clamp(20px, 2.4vw, 30px);
+      line-height: 1.08;
+      overflow-wrap: anywhere;
+    }
+
+    .live-score b {
+      color: #fff8d6;
+      font-size: clamp(46px, 6.6vw, 76px);
+      line-height: 0.95;
+    }
+
+    .live-clock {
+      justify-items: center;
+      text-align: center;
+    }
+
+    .live-clock strong {
+      color: var(--gold);
+      font-size: clamp(34px, 4.8vw, 56px);
+      line-height: 1;
+    }
+
+    .result-actions {
+      display: grid;
+      grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+      gap: 10px;
+      align-items: stretch;
+      margin-bottom: 16px;
+    }
+
+    .result-message,
+    .history-count {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 9px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff8d6;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1.15;
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+
+    .result-message[data-state="saved"],
+    .status-line[data-state="saved"] {
+      color: #50f091;
+    }
+
+    .result-message[data-state="waiting"],
+    .status-line[data-state="waiting"] {
+      color: #ffe072;
+    }
+
+    .history-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 6px 0 10px;
+    }
+
+    .history-count {
+      min-width: 118px;
+      min-height: 36px;
+      color: #9fd6ff;
+      white-space: nowrap;
+    }
+
+    .history-table-wrap {
+      overflow-x: auto;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.22);
+    }
+
+    .result-history-table {
+      width: 100%;
+      min-width: 900px;
+      border-collapse: collapse;
+    }
+
+    .result-history-table th,
+    .result-history-table td {
+      padding: 11px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      font-size: 15px;
+      line-height: 1.2;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .result-history-table th {
+      color: #9fd6ff;
+      font-size: 13px;
+      font-weight: 900;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .result-history-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .score-pill,
+    .save-mode {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 30px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff8d6;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .history-delete-cell {
+      width: 72px;
+      text-align: center !important;
+    }
+
+    .history-delete-button {
+      width: 48px;
+      min-height: 36px;
+      padding: 8px 10px;
+      border-color: rgba(255, 255, 255, 0.18) !important;
+      background: var(--red);
+      font-size: 15px;
+      box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.22);
+    }
+
+    .save-mode.auto {
+      color: #50f091;
+    }
+
+    .save-mode.manual {
+      color: #ffe072;
+    }
+
+    .empty-history {
+      padding: 18px;
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 800;
+      text-align: center;
+    }
+
     .form-stack {
       display: grid;
       gap: 12px;
@@ -322,6 +523,8 @@
       .match-pickers,
       .display-tools,
       .text-preview,
+      .result-board,
+      .result-actions,
       .action-row {
         grid-template-columns: 1fr;
       }
@@ -333,6 +536,15 @@
 
       .status-line {
         white-space: normal;
+      }
+
+      .live-score[data-side="B"] {
+        text-align: left;
+      }
+
+      .history-head {
+        display: grid;
+        justify-items: stretch;
       }
     }
 
@@ -440,6 +652,69 @@
         </div>
       </section>
 
+      <section class="box wide result-section">
+        <div class="section-head">
+          <h2>บันทึกผลการแข่งขัน</h2>
+          <div class="status-panel">
+            <div class="status-line" id="matchSaveState" data-state="waiting">RESULT: READY</div>
+          </div>
+        </div>
+
+        <div class="result-board">
+          <div class="live-score" data-side="A">
+            <span>TEAM A</span>
+            <strong id="resultTeamA">TEAM A</strong>
+            <b id="resultScoreA">0</b>
+            <span>SHOT <em id="resultShotA">--.--</em></span>
+          </div>
+
+          <div class="live-clock">
+            <span>TIME</span>
+            <strong id="resultTime">00.00</strong>
+            <span id="resultStatus">STOP</span>
+          </div>
+
+          <div class="live-score" data-side="B">
+            <span>TEAM B</span>
+            <strong id="resultTeamB">TEAM B</strong>
+            <b id="resultScoreB">0</b>
+            <span>SHOT <em id="resultShotB">--.--</em></span>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button class="green" id="saveMatchButton" type="button">บันทึกผลก่อนครบ 3 นาที</button>
+          <div class="result-message" id="resultMessage" data-state="waiting">ยังไม่ครบ 3 นาที สามารถกดบันทึกเมื่อจบก่อนเวลา</div>
+        </div>
+
+        <div class="history-head">
+          <h2>ประวัติผลย้อนหลัง</h2>
+          <div class="history-count" id="historyCount">0 รายการ</div>
+        </div>
+
+        <div class="history-table-wrap">
+          <table class="result-history-table" id="matchHistoryTable">
+            <thead>
+              <tr>
+                <th>คู่ที่</th>
+                <th>เวลาแข่ง</th>
+                <th>ทีม A</th>
+                <th>SHOT A</th>
+                <th>ผล</th>
+                <th>ทีม B</th>
+                <th>SHOT B</th>
+                <th>ผู้ชนะ</th>
+                <th>บันทึก</th>
+                <th>เวลาบันทึก</th>
+                <th>ลบ</th>
+              </tr>
+            </thead>
+            <tbody id="matchHistoryBody"></tbody>
+          </table>
+          <div class="empty-history" id="emptyHistory">ยังไม่มีประวัติการแข่งขัน</div>
+        </div>
+      </section>
+
       <section class="box">
         <form class="form-stack" id="addTeamForm">
           <h2>เพิ่มชื่อทีม</h2>
@@ -477,12 +752,25 @@
     const hideTeamNamesButton = document.getElementById("hideTeamNamesButton");
     const serverStatusLine = document.getElementById("serverStatusLine");
     const messageLine = document.getElementById("messageLine");
+    const matchSaveState = document.getElementById("matchSaveState");
+    const saveMatchButton = document.getElementById("saveMatchButton");
+    const resultMessage = document.getElementById("resultMessage");
+    const matchHistoryTable = document.getElementById("matchHistoryTable");
+    const matchHistoryBody = document.getElementById("matchHistoryBody");
+    const emptyHistory = document.getElementById("emptyHistory");
+    const historyCount = document.getElementById("historyCount");
     const controls = document.querySelectorAll("select, input, button");
 
     let teamNames = ["TEAM A", "TEAM B"];
     let teamNameA = "TEAM A";
     let teamNameB = "TEAM B";
     let teamNamesVisible = true;
+    let scoreA = 0;
+    let scoreB = 0;
+    let timeElapsed = 0;
+    let matchDuration = 180;
+    let currentMatchSaved = false;
+    let matchResults = [];
     let serverConnected = false;
     let editIsDirty = false;
 
@@ -500,6 +788,7 @@
       }
 
       updateDisplayButtons();
+      updateMatchSaveControls();
     }
 
     function setServerStatus(message, state) {
@@ -529,6 +818,176 @@
 
       showTeamNamesButton.disabled = teamNamesVisible;
       hideTeamNamesButton.disabled = !teamNamesVisible;
+    }
+
+    function formatClock(seconds) {
+      const safeSeconds = Number.isFinite(Number(seconds)) ? Math.max(Number(seconds), 0) : 0;
+      const minutes = Math.floor(safeSeconds / 60);
+      const remainingSeconds = Math.floor(safeSeconds % 60);
+      return `${String(minutes).padStart(2, "0")}.${String(remainingSeconds).padStart(2, "0")}`;
+    }
+
+    function formatSavedAt(value) {
+      const savedDate = new Date(value);
+      if (Number.isNaN(savedDate.getTime())) return "-";
+
+      return savedDate.toLocaleString("th-TH", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function showResultStatus(message, state) {
+      resultMessage.innerText = message;
+      resultMessage.dataset.state = state || "";
+    }
+
+    function updateMatchSaveControls() {
+      if (!serverConnected) {
+        saveMatchButton.disabled = true;
+        matchSaveState.innerText = "RESULT: OFFLINE";
+        matchSaveState.dataset.state = "offline";
+        return;
+      }
+
+      if (currentMatchSaved) {
+        saveMatchButton.disabled = true;
+        matchSaveState.innerText = "RESULT: SAVED";
+        matchSaveState.dataset.state = "saved";
+        return;
+      }
+
+      if (timeElapsed >= matchDuration) {
+        saveMatchButton.disabled = true;
+        matchSaveState.innerText = "RESULT: AUTO";
+        matchSaveState.dataset.state = "saved";
+        return;
+      }
+
+      saveMatchButton.disabled = false;
+      matchSaveState.innerText = "RESULT: READY";
+      matchSaveState.dataset.state = "waiting";
+    }
+
+    function parseShotTimeForResult(value) {
+      const match = String(value || "").trim().match(/^(\d+)[.:](\d{2})$/);
+      if (!match) return null;
+
+      const minutes = Number(match[1]);
+      const seconds = Number(match[2]);
+      if (!Number.isFinite(minutes) || !Number.isFinite(seconds) || seconds >= 60) return null;
+
+      return minutes * 60 + seconds;
+    }
+
+    function getWinnerLabel(result) {
+      if (!result) return "เสมอ";
+
+      const resultScoreA = Number(result.scoreA) || 0;
+      const resultScoreB = Number(result.scoreB) || 0;
+
+      if (resultScoreA > resultScoreB) return result.teamNameA || "TEAM A";
+      if (resultScoreB > resultScoreA) return result.teamNameB || "TEAM B";
+
+      const shotSecondsA = parseShotTimeForResult(result.shotA);
+      const shotSecondsB = parseShotTimeForResult(result.shotB);
+
+      if (shotSecondsA !== null && shotSecondsB !== null) {
+        if (shotSecondsA < shotSecondsB) return result.teamNameA || "TEAM A";
+        if (shotSecondsB < shotSecondsA) return result.teamNameB || "TEAM B";
+      }
+
+      return "เสมอ";
+    }
+
+    function appendTextCell(row, text) {
+      const cell = document.createElement("td");
+      cell.innerText = text;
+      row.appendChild(cell);
+      return cell;
+    }
+
+    function renderHistory(results) {
+      matchResults = Array.isArray(results) ? results : [];
+      historyCount.innerText = `${matchResults.length} รายการ`;
+      matchHistoryBody.innerHTML = "";
+
+      const hasHistory = matchResults.length > 0;
+      matchHistoryTable.hidden = !hasHistory;
+      emptyHistory.hidden = hasHistory;
+
+      matchResults.forEach((result) => {
+        const row = document.createElement("tr");
+        appendTextCell(row, result.matchNumber || "-");
+        appendTextCell(row, result.elapsedTime || formatClock(result.elapsedSeconds));
+        appendTextCell(row, result.teamNameA || "TEAM A");
+        appendTextCell(row, result.shotA || "--.--");
+
+        const scoreCell = document.createElement("td");
+        const scorePill = document.createElement("span");
+        scorePill.className = "score-pill";
+        scorePill.innerText = `${Number(result.scoreA) || 0} - ${Number(result.scoreB) || 0}`;
+        scoreCell.appendChild(scorePill);
+        row.appendChild(scoreCell);
+
+        appendTextCell(row, result.teamNameB || "TEAM B");
+        appendTextCell(row, result.shotB || "--.--");
+        appendTextCell(row, getWinnerLabel(result));
+
+        const modeCell = document.createElement("td");
+        const modeBadge = document.createElement("span");
+        const mode = result.mode === "auto" ? "auto" : "manual";
+        modeBadge.className = `save-mode ${mode}`;
+        modeBadge.innerText = mode === "auto" ? "AUTO" : "MANUAL";
+        modeCell.appendChild(modeBadge);
+        row.appendChild(modeCell);
+
+        appendTextCell(row, formatSavedAt(result.savedAt));
+
+        const deleteCell = document.createElement("td");
+        deleteCell.className = "history-delete-cell";
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "history-delete-button";
+        deleteButton.type = "button";
+        deleteButton.dataset.resultId = result.id || "";
+        deleteButton.disabled = !serverConnected || !result.id;
+        deleteButton.innerText = "ลบ";
+        deleteCell.appendChild(deleteButton);
+        row.appendChild(deleteCell);
+
+        matchHistoryBody.appendChild(row);
+      });
+    }
+
+    function renderResultPanel(data) {
+      scoreA = Number(data.scoreA) || 0;
+      scoreB = Number(data.scoreB) || 0;
+      timeElapsed = Number(data.timeElapsed) || 0;
+      matchDuration = Number(data.matchDuration) || 180;
+      currentMatchSaved = Boolean(data.currentMatchSaved);
+
+      document.getElementById("resultTeamA").innerText = teamNameA;
+      document.getElementById("resultTeamB").innerText = teamNameB;
+      document.getElementById("resultScoreA").innerText = scoreA;
+      document.getElementById("resultScoreB").innerText = scoreB;
+      document.getElementById("resultShotA").innerText = data.shotA || "--.--";
+      document.getElementById("resultShotB").innerText = data.shotB || "--.--";
+      document.getElementById("resultTime").innerText = data.time || formatClock(timeElapsed);
+      document.getElementById("resultStatus").innerText = data.status || "STOP";
+
+      if (currentMatchSaved) {
+        showResultStatus("บันทึกผลคู่นี้แล้ว ดูรายการล่าสุดได้ในตารางย้อนหลัง", "saved");
+      } else if (timeElapsed >= matchDuration) {
+        showResultStatus("ครบเวลา 3 นาที ระบบจะบันทึกผลให้อัตโนมัติ", "saved");
+      } else {
+        showResultStatus("ยังไม่ครบ 3 นาที สามารถกดบันทึกเมื่อจบก่อนเวลา", "waiting");
+      }
+
+      updateMatchSaveControls();
+      renderHistory(data.matchResults);
     }
 
     function renderOptions(select, selectedName) {
@@ -571,6 +1030,7 @@
       }
 
       deleteTeamButton.disabled = teamNames.length <= 1;
+      renderResultPanel(data);
       updateDisplayStatus();
       updateDisplayButtons();
     }
@@ -675,6 +1135,45 @@
         socket.emit("team-name-delete", { name });
         editIsDirty = false;
         showStatus("ลบชื่อทีมแล้ว");
+      });
+
+      matchHistoryBody.addEventListener("click", (event) => {
+        const deleteButton = event.target.closest(".history-delete-button");
+        if (!deleteButton || deleteButton.disabled) return;
+
+        const resultId = deleteButton.dataset.resultId;
+        const result = matchResults.find((matchResult) => matchResult.id === resultId);
+        const matchLabel = result
+          ? `คู่ที่ ${result.matchNumber || "-"} (${result.teamNameA || "TEAM A"} vs ${result.teamNameB || "TEAM B"})`
+          : "รายการนี้";
+
+        if (!window.confirm(`ลบ${matchLabel}?`)) return;
+
+        deleteButton.disabled = true;
+        showResultStatus("กำลังลบรายการ...", "waiting");
+
+        socket.emit("match-result-delete", { id: resultId }, (response) => {
+          if (response && response.deleted) {
+            showResultStatus("ลบรายการย้อนหลังแล้ว", "saved");
+          } else {
+            showResultStatus("ไม่พบรายการที่ต้องการลบ", "waiting");
+          }
+        });
+      });
+
+      saveMatchButton.addEventListener("click", () => {
+        if (!serverConnected || saveMatchButton.disabled) return;
+
+        saveMatchButton.disabled = true;
+        showResultStatus("กำลังบันทึกผลการแข่งขัน...", "waiting");
+
+        socket.emit("match-result-save", (response) => {
+          if (response && response.saved) {
+            showResultStatus("บันทึกผลการแข่งขันแล้ว", "saved");
+          } else {
+            showResultStatus("คู่นี้ถูกบันทึกไว้แล้ว", "saved");
+          }
+        });
       });
 
       showTeamNamesButton.addEventListener("click", () => {

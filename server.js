@@ -20,6 +20,9 @@ let teamNames = ["TEAM A", "TEAM B"];
 let teamNameA = "TEAM A";
 let teamNameB = "TEAM B";
 let teamNamesVisible = true;
+let matchResults = [];
+let currentMatchSaved = false;
+let currentMatchSavedResultId = "";
 
 let timeElapsed = 0;
 let matchDuration = 180;
@@ -33,6 +36,7 @@ if (!fs.existsSync(obsDir)) {
 }
 
 const teamDataFile = path.join(obsDir, "team-names.json");
+const matchResultsFile = path.join(obsDir, "match-results.json");
 
 function cleanTeamName(value) {
   return String(value || "").trim().replace(/\s+/g, " ").slice(0, 80);
@@ -105,6 +109,178 @@ function saveTeamNameData() {
   };
 
   fs.writeFileSync(teamDataFile, JSON.stringify(data, null, 2));
+}
+
+function loadMatchResults() {
+  if (!fs.existsSync(matchResultsFile)) return;
+
+  try {
+    const savedData = JSON.parse(fs.readFileSync(matchResultsFile, "utf8"));
+    matchResults = Array.isArray(savedData) ? savedData.map(normalizeMatchResult) : [];
+  } catch (error) {
+    console.warn("Could not read match results:", error.message);
+    matchResults = [];
+  }
+}
+
+function saveMatchResults() {
+  fs.writeFileSync(matchResultsFile, JSON.stringify(matchResults, null, 2));
+}
+
+function resetCurrentMatchSave() {
+  currentMatchSaved = false;
+  currentMatchSavedResultId = "";
+}
+
+function getNextMatchNumber() {
+  return matchResults.reduce((highestNumber, result) => {
+    const matchNumber = Number(result && result.matchNumber);
+    return Number.isFinite(matchNumber) ? Math.max(highestNumber, matchNumber) : highestNumber;
+  }, 0) + 1;
+}
+
+function parseShotTime(value) {
+  const match = String(value || "").trim().match(/^(\d+)[.:](\d{2})$/);
+  if (!match) return null;
+
+  const minutes = Number(match[1]);
+  const seconds = Number(match[2]);
+  if (!Number.isFinite(minutes) || !Number.isFinite(seconds) || seconds >= 60) return null;
+
+  return minutes * 60 + seconds;
+}
+
+function getWinnerInfoFromValues(firstScore, secondScore, firstShot, secondShot, firstName, secondName) {
+  const safeScoreA = Number(firstScore) || 0;
+  const safeScoreB = Number(secondScore) || 0;
+
+  if (safeScoreA > safeScoreB) {
+    return {
+      winner: "A",
+      winnerName: firstName || "TEAM A",
+    };
+  }
+
+  if (safeScoreB > safeScoreA) {
+    return {
+      winner: "B",
+      winnerName: secondName || "TEAM B",
+    };
+  }
+
+  const shotSecondsA = parseShotTime(firstShot);
+  const shotSecondsB = parseShotTime(secondShot);
+
+  if (shotSecondsA !== null && shotSecondsB !== null) {
+    if (shotSecondsA < shotSecondsB) {
+      return {
+        winner: "A",
+        winnerName: firstName || "TEAM A",
+      };
+    }
+
+    if (shotSecondsB < shotSecondsA) {
+      return {
+        winner: "B",
+        winnerName: secondName || "TEAM B",
+      };
+    }
+  }
+
+  return {
+    winner: "DRAW",
+    winnerName: "DRAW",
+  };
+}
+
+function getWinnerInfo() {
+  return getWinnerInfoFromValues(scoreA, scoreB, shotA, shotB, teamNameA, teamNameB);
+}
+
+function normalizeMatchResult(result) {
+  const safeResult = result && typeof result === "object" ? result : {};
+  const winnerInfo = getWinnerInfoFromValues(
+    safeResult.scoreA,
+    safeResult.scoreB,
+    safeResult.shotA,
+    safeResult.shotB,
+    safeResult.teamNameA,
+    safeResult.teamNameB
+  );
+
+  return {
+    ...safeResult,
+    winner: winnerInfo.winner,
+    winnerName: winnerInfo.winnerName,
+  };
+}
+
+function saveCurrentMatchResult(mode) {
+  if (currentMatchSaved) {
+    return {
+      saved: false,
+      result: matchResults.find((result) => result.id === currentMatchSavedResultId) || null,
+    };
+  }
+
+  const saveMode = mode === "auto" ? "auto" : "manual";
+  const winnerInfo = getWinnerInfo();
+  const result = {
+    id: `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+    matchNumber: getNextMatchNumber(),
+    savedAt: new Date().toISOString(),
+    mode: saveMode,
+    teamNameA,
+    teamNameB,
+    scoreA,
+    scoreB,
+    shotA,
+    shotB,
+    elapsedSeconds: timeElapsed,
+    elapsedTime: formatTime(timeElapsed),
+    matchDuration,
+    winner: winnerInfo.winner,
+    winnerName: winnerInfo.winnerName,
+  };
+
+  matchResults = [result, ...matchResults].slice(0, 200);
+  currentMatchSaved = true;
+  currentMatchSavedResultId = result.id;
+  saveMatchResults();
+
+  return {
+    saved: true,
+    result,
+  };
+}
+
+function deleteMatchResult(id) {
+  const resultId = String(id || "").trim();
+  if (!resultId) return false;
+
+  const beforeLength = matchResults.length;
+  matchResults = matchResults.filter((result) => result && result.id !== resultId);
+  const deleted = matchResults.length !== beforeLength;
+
+  if (deleted) {
+    if (currentMatchSavedResultId === resultId) {
+      resetCurrentMatchSave();
+    }
+
+    saveMatchResults();
+  }
+
+  return deleted;
+}
+
+function finishMatchWithResult(mode) {
+  if (timer !== null) {
+    clearInterval(timer);
+    timer = null;
+  }
+
+  status = "FINISH";
+  return saveCurrentMatchResult(mode);
 }
 
 function setTeamNamesVisible(visible) {
@@ -200,6 +376,9 @@ function sendUpdate() {
     teamNameA,
     teamNameB,
     teamNamesVisible,
+    matchResults,
+    currentMatchSaved,
+    currentMatchSavedResultId,
     time: formatTime(timeElapsed),
     timeElapsed,
     matchDuration,
@@ -233,6 +412,7 @@ function startTimer() {
       clearInterval(timer);
       timer = null;
       status = "FINISH";
+      saveCurrentMatchResult("auto");
     }
 
     sendUpdate();
@@ -270,6 +450,7 @@ function resetTimer(seconds = 180) {
   shotA = "";
   shotB = "";
   status = "STOP";
+  resetCurrentMatchSave();
   sendUpdate();
 }
 
@@ -348,6 +529,7 @@ io.on("connection", (socket) => {
     shotB = "";
     timeElapsed = 0;
     status = "STOP";
+    resetCurrentMatchSave();
     sendUpdate();
   });
 
@@ -384,10 +566,34 @@ io.on("connection", (socket) => {
   socket.on("team-names-hide", () => {
     setTeamNamesVisible(false);
   });
+
+  socket.on("match-result-save", (callback) => {
+    const saveMode = timeElapsed >= matchDuration ? "auto" : "manual";
+    const saveResult = finishMatchWithResult(saveMode);
+    sendUpdate();
+
+    if (typeof callback === "function") {
+      callback(saveResult);
+    }
+  });
+
+  socket.on("match-result-delete", (data, callback) => {
+    const deleted = deleteMatchResult(data && data.id);
+    sendUpdate();
+
+    if (typeof callback === "function") {
+      callback({
+        deleted,
+        matchResults,
+      });
+    }
+  });
 });
 
 loadTeamNameData();
+loadMatchResults();
 saveTeamNameData();
+saveMatchResults();
 writeObsFiles();
 
 server.listen(PORT, "0.0.0.0", () => {
