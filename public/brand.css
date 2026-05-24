@@ -93,7 +93,7 @@ body > * {
 .event-title strong {
   display: block;
   color: #fff8d6;
-  font-size: clamp(20px, 3vw, 34px);
+  font-size: clamp(50px, 3vw, 34px);
   line-height: 1;
 }
 
@@ -101,7 +101,7 @@ body > * {
   display: block;
   margin-top: 6px;
   color: #9fd6ff;
-  font-size: clamp(12px, 1.7vw, 18px);
+  font-size: clamp(30px, 1.7vw, 18px);
   font-weight: 800;
   letter-spacing: 0;
 }

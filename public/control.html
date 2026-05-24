@@ -37,6 +37,10 @@
       max-width: none;
     }
 
+    .control-shell.control-shell {
+      width: min(100%, 1180px);
+    }
+
     .score-row {
       display: flex;
       justify-content: center;
@@ -141,6 +145,239 @@
       text-decoration: none;
     }
 
+    .result-section {
+      grid-column: 1 / -1;
+      text-align: left;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .status-panel {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .status-line {
+      min-height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.07);
+      color: #fff8d6;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .result-board {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(150px, 0.55fr) minmax(0, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .live-score,
+    .live-clock {
+      min-height: 126px;
+      display: grid;
+      align-content: center;
+      gap: 7px;
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.22);
+    }
+
+    .live-score[data-side="A"] {
+      border-left: 5px solid var(--blue);
+    }
+
+    .live-score[data-side="B"] {
+      border-left: 5px solid var(--red);
+      text-align: right;
+    }
+
+    .live-score span,
+    .live-clock span {
+      color: #9fd6ff;
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .live-score em {
+      color: #fff8d6;
+      font-style: normal;
+    }
+
+    .live-score strong {
+      color: #ffffff;
+      font-size: clamp(20px, 2.4vw, 30px);
+      line-height: 1.08;
+      overflow-wrap: anywhere;
+    }
+
+    .live-score b {
+      color: #fff8d6;
+      font-size: clamp(46px, 6.6vw, 76px);
+      line-height: 0.95;
+    }
+
+    .live-clock {
+      justify-items: center;
+      text-align: center;
+    }
+
+    .live-clock strong {
+      color: var(--gold);
+      font-size: clamp(34px, 4.8vw, 56px);
+      line-height: 1;
+    }
+
+    .result-message,
+    .history-count {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 9px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff8d6;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1.15;
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+
+    .result-message {
+      margin-bottom: 16px;
+    }
+
+    .result-message[data-state="saved"],
+    .status-line[data-state="saved"] {
+      color: #50f091;
+    }
+
+    .result-message[data-state="waiting"],
+    .status-line[data-state="waiting"] {
+      color: #ffe072;
+    }
+
+    .status-line[data-state="offline"] {
+      color: #ff7a76;
+    }
+
+    .history-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 6px 0 10px;
+    }
+
+    .history-count {
+      min-width: 118px;
+      min-height: 36px;
+      color: #9fd6ff;
+      white-space: nowrap;
+    }
+
+    .history-table-wrap {
+      overflow-x: auto;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.22);
+    }
+
+    .result-history-table {
+      width: 100%;
+      min-width: 820px;
+      border-collapse: collapse;
+    }
+
+    .result-history-table th,
+    .result-history-table td {
+      padding: 11px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      font-size: 15px;
+      line-height: 1.2;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .result-history-table th {
+      color: #9fd6ff;
+      font-size: 13px;
+      font-weight: 900;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .result-history-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .score-pill,
+    .save-mode {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 30px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff8d6;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .history-delete-cell {
+      width: 72px;
+      text-align: center !important;
+    }
+
+    .history-delete-button {
+      min-width: 48px;
+      min-height: 36px;
+      padding: 8px 10px;
+      border-color: rgba(255, 255, 255, 0.18) !important;
+      background: var(--red);
+      font-size: 15px;
+      box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.22);
+    }
+
+    .save-mode.auto {
+      color: #50f091;
+    }
+
+    .save-mode.manual {
+      color: #ffe072;
+    }
+
+    .empty-history {
+      padding: 18px;
+      color: #d7dce4;
+      font-size: 16px;
+      font-weight: 800;
+      text-align: center;
+    }
+
     button {
       min-width: 126px;
       min-height: 62px;
@@ -187,6 +424,22 @@
       background: var(--gray);
     }
 
+    @media (max-width: 760px) {
+      .result-board {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head,
+      .history-head {
+        display: grid;
+        justify-items: stretch;
+      }
+
+      .live-score[data-side="B"] {
+        text-align: left;
+      }
+    }
+
     @media (max-width: 560px) {
       body {
         padding: 14px;
@@ -206,15 +459,13 @@
 <body>
   <main class="control-shell">
     <div class="brand-strip">
-      <img class="brand-logo" src="/assets/robot-contest-logo.png" alt="R-VEC Robot Contest">
+      <img class="brand-logo" src="/assets/vec-seal.png" alt="R-VEC Robot Contest">
       <div class="event-title">
         <strong>ROBOT CONTEST</strong>
         <span>CONTROL PANEL</span>
       </div>
-      <img class="brand-seal" src="/assets/vec-seal.png" alt="Vocational Education Commission">
+      <img class="brand-seal" src="/assets/robot-contest-logo.png" alt="Vocational Education Commission">
     </div>
-
-    <h1>ROBOT SCOREBOARD CONTROL</h1>
     <nav class="quick-links" aria-label="Setup pages">
       <a href="/team-names.html">TEAM NAME SETUP</a>
     </nav>
@@ -235,15 +486,6 @@
       </section>
 
       <section class="box">
-        <h2>ตั้งเวลาแข่งขัน</h2>
-        <div class="button-row">
-          <button class="blue" onclick="setTime(60)">1 นาที</button>
-          <button class="blue" onclick="setTime(120)">2 นาที</button>
-          <button class="blue" onclick="setTime(180)">3 นาที</button>
-        </div>
-      </section>
-
-      <section class="box">
         <h2>ควบคุมเวลา</h2>
         <div class="button-row">
           <button class="green" onclick="startTime()">เริ่ม</button>
@@ -259,13 +501,65 @@
         </div>
       </section>
 
-      <section class="box">
-        <h2>จบเกม +20</h2>
-        <div class="button-row">
-          <button class="orange" id="endTeamA" onclick="endMatch('A')">TEAM A +20 END</button>
-          <button class="orange" id="endTeamB" onclick="endMatch('B')">TEAM B +20 END</button>
+      <section class="box result-section">
+        <div class="section-head">
+          <h2>บันทึกผลการแข่งขัน</h2>
+          <div class="status-panel">
+            <div class="status-line" id="matchSaveState" data-state="waiting">RESULT: READY</div>
+          </div>
+        </div>
+
+        <div class="result-board">
+          <div class="live-score" data-side="A">
+            <span>TEAM A</span>
+            <strong id="resultTeamA">TEAM A</strong>
+            <b id="resultScoreA">0</b>
+            <span>SHOT <em id="resultShotA">--.--</em></span>
+          </div>
+
+          <div class="live-clock">
+            <span>TIME</span>
+            <strong id="resultTime">00.00</strong>
+            <span id="resultStatus">STOP</span>
+          </div>
+
+          <div class="live-score" data-side="B">
+            <span>TEAM B</span>
+            <strong id="resultTeamB">TEAM B</strong>
+            <b id="resultScoreB">0</b>
+            <span>SHOT <em id="resultShotB">--.--</em></span>
+          </div>
+        </div>
+
+        <div class="result-message" id="resultMessage" data-state="waiting">รอครบ 3 นาที ระบบจะบันทึกผลอัตโนมัติ</div>
+
+        <div class="history-head">
+          <h2>ประวัติผลย้อนหลัง</h2>
+          <div class="history-count" id="historyCount">0 รายการ</div>
+        </div>
+
+        <div class="history-table-wrap">
+          <table class="result-history-table" id="matchHistoryTable">
+            <thead>
+              <tr>
+                <th>คู่ที่</th>
+                <th>ทีม A</th>
+                <th>SHOT A</th>
+                <th>ผล</th>
+                <th>ทีม B</th>
+                <th>SHOT B</th>
+                <th>ผู้ชนะ</th>
+                <th>บันทึก</th>
+                <th>เวลาบันทึก</th>
+                <th>ลบ</th>
+              </tr>
+            </thead>
+            <tbody id="matchHistoryBody"></tbody>
+          </table>
+          <div class="empty-history" id="emptyHistory">ยังไม่มีประวัติการแข่งขัน</div>
         </div>
       </section>
+
     </div>
   </main>
 
@@ -273,10 +567,15 @@
   <script src="/final-warning.js"></script>
   <script>
     const socket = io();
+    const matchSaveState = document.getElementById("matchSaveState");
+    const resultMessage = document.getElementById("resultMessage");
+    const matchHistoryTable = document.getElementById("matchHistoryTable");
+    const matchHistoryBody = document.getElementById("matchHistoryBody");
+    const emptyHistory = document.getElementById("emptyHistory");
+    const historyCount = document.getElementById("historyCount");
 
-    function setTime(seconds) {
-      socket.emit("set-time", seconds);
-    }
+    let matchResults = [];
+    let serverConnected = false;
 
     function startTime() {
       if (typeof unlockWarningAudio === "function") unlockWarningAudio();
@@ -295,14 +594,186 @@
       socket.emit("reset-all");
     }
 
-    function endMatch(team) {
-      socket.emit("end-with-bonus", {
-        team: team,
-        point: 20
+    function formatClock(seconds) {
+      const safeSeconds = Number.isFinite(Number(seconds)) ? Math.max(Number(seconds), 0) : 0;
+      const minutes = Math.floor(safeSeconds / 60);
+      const remainingSeconds = Math.floor(safeSeconds % 60);
+      return `${String(minutes).padStart(2, "0")}.${String(remainingSeconds).padStart(2, "0")}`;
+    }
+
+    function formatSavedAt(value) {
+      const savedDate = new Date(value);
+      if (Number.isNaN(savedDate.getTime())) return "-";
+
+      return savedDate.toLocaleString("th-TH", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
       });
     }
 
+    function showResultStatus(message, state) {
+      resultMessage.innerText = message;
+      resultMessage.dataset.state = state || "";
+    }
+
+    function updateMatchSaveState(data) {
+      const timeElapsed = Number(data.timeElapsed) || 0;
+      const matchDuration = Number(data.matchDuration) || 180;
+
+      if (!serverConnected) {
+        matchSaveState.innerText = "RESULT: OFFLINE";
+        matchSaveState.dataset.state = "offline";
+        return;
+      }
+
+      if (data.currentMatchSaved) {
+        matchSaveState.innerText = "RESULT: SAVED";
+        matchSaveState.dataset.state = "saved";
+        return;
+      }
+
+      if (timeElapsed >= matchDuration) {
+        matchSaveState.innerText = "RESULT: AUTO";
+        matchSaveState.dataset.state = "saved";
+        return;
+      }
+
+      matchSaveState.innerText = "RESULT: WAITING";
+      matchSaveState.dataset.state = "waiting";
+    }
+
+    function parseShotTimeForResult(value) {
+      const match = String(value || "").trim().match(/^(\d+)[.:](\d{2})$/);
+      if (!match) return null;
+
+      const minutes = Number(match[1]);
+      const seconds = Number(match[2]);
+      if (!Number.isFinite(minutes) || !Number.isFinite(seconds) || seconds >= 60) return null;
+
+      return minutes * 60 + seconds;
+    }
+
+    function getWinnerLabel(result) {
+      if (!result) return "เสมอ";
+
+      const resultScoreA = Number(result.scoreA) || 0;
+      const resultScoreB = Number(result.scoreB) || 0;
+
+      if (resultScoreA > resultScoreB) return result.teamNameA || "TEAM A";
+      if (resultScoreB > resultScoreA) return result.teamNameB || "TEAM B";
+
+      const shotSecondsA = parseShotTimeForResult(result.shotA);
+      const shotSecondsB = parseShotTimeForResult(result.shotB);
+
+      if (shotSecondsA !== null && shotSecondsB !== null) {
+        if (shotSecondsA < shotSecondsB) return result.teamNameA || "TEAM A";
+        if (shotSecondsB < shotSecondsA) return result.teamNameB || "TEAM B";
+      }
+
+      return "เสมอ";
+    }
+
+    function appendTextCell(row, text) {
+      const cell = document.createElement("td");
+      cell.innerText = text;
+      row.appendChild(cell);
+      return cell;
+    }
+
+    function renderHistory(results) {
+      matchResults = Array.isArray(results) ? results : [];
+      historyCount.innerText = `${matchResults.length} รายการ`;
+      matchHistoryBody.innerHTML = "";
+
+      const hasHistory = matchResults.length > 0;
+      matchHistoryTable.hidden = !hasHistory;
+      emptyHistory.hidden = hasHistory;
+
+      matchResults.forEach((result) => {
+        const row = document.createElement("tr");
+        appendTextCell(row, result.matchNumber || "-");
+        appendTextCell(row, result.teamNameA || "TEAM A");
+        appendTextCell(row, result.shotA || "--.--");
+
+        const scoreCell = document.createElement("td");
+        const scorePill = document.createElement("span");
+        scorePill.className = "score-pill";
+        scorePill.innerText = `${Number(result.scoreA) || 0} - ${Number(result.scoreB) || 0}`;
+        scoreCell.appendChild(scorePill);
+        row.appendChild(scoreCell);
+
+        appendTextCell(row, result.teamNameB || "TEAM B");
+        appendTextCell(row, result.shotB || "--.--");
+        appendTextCell(row, getWinnerLabel(result));
+
+        const modeCell = document.createElement("td");
+        const modeBadge = document.createElement("span");
+        const mode = result.mode === "auto" ? "auto" : "manual";
+        modeBadge.className = `save-mode ${mode}`;
+        modeBadge.innerText = mode === "auto" ? "AUTO" : "MANUAL";
+        modeCell.appendChild(modeBadge);
+        row.appendChild(modeCell);
+
+        appendTextCell(row, formatSavedAt(result.savedAt));
+
+        const deleteCell = document.createElement("td");
+        deleteCell.className = "history-delete-cell";
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "history-delete-button";
+        deleteButton.type = "button";
+        deleteButton.dataset.resultId = result.id || "";
+        deleteButton.disabled = !serverConnected || !result.id;
+        deleteButton.innerText = "ลบ";
+        deleteCell.appendChild(deleteButton);
+        row.appendChild(deleteCell);
+
+        matchHistoryBody.appendChild(row);
+      });
+    }
+
+    function renderResultPanel(data) {
+      const timeElapsed = Number(data.timeElapsed) || 0;
+      const matchDuration = Number(data.matchDuration) || 180;
+      const teamNameA = data.teamNameA || "TEAM A";
+      const teamNameB = data.teamNameB || "TEAM B";
+
+      document.getElementById("resultTeamA").innerText = teamNameA;
+      document.getElementById("resultTeamB").innerText = teamNameB;
+      document.getElementById("resultScoreA").innerText = Number(data.scoreA) || 0;
+      document.getElementById("resultScoreB").innerText = Number(data.scoreB) || 0;
+      document.getElementById("resultShotA").innerText = data.shotA || "--.--";
+      document.getElementById("resultShotB").innerText = data.shotB || "--.--";
+      document.getElementById("resultTime").innerText = data.time || formatClock(timeElapsed);
+      document.getElementById("resultStatus").innerText = data.status || "STOP";
+
+      if (data.currentMatchSaved) {
+        showResultStatus("บันทึกผลคู่นี้แล้ว ดูรายการล่าสุดได้ในตารางย้อนหลัง", "saved");
+      } else if (timeElapsed >= matchDuration) {
+        showResultStatus("ครบเวลา 3 นาที ระบบจะบันทึกผลให้อัตโนมัติ", "saved");
+      } else {
+        showResultStatus("รอครบ 3 นาที ระบบจะบันทึกผลอัตโนมัติ", "waiting");
+      }
+
+      updateMatchSaveState(data);
+      renderHistory(data.matchResults);
+    }
+
+    socket.on("connect", () => {
+      serverConnected = true;
+    });
+
+    socket.on("disconnect", () => {
+      serverConnected = false;
+      matchSaveState.innerText = "RESULT: OFFLINE";
+      matchSaveState.dataset.state = "offline";
+      renderHistory(matchResults);
+    });
+
     socket.on("update", (data) => {
+      serverConnected = true;
       document.getElementById("scoreA").innerText = data.scoreA;
       document.getElementById("scoreB").innerText = data.scoreB;
       document.getElementById("teamNameA").innerText = data.teamNameA || "TEAM A";
@@ -312,9 +783,32 @@
       document.getElementById("shotB").innerText = data.shotB || "--.--";
       document.getElementById("status").innerText = data.status;
       document.getElementById("resetScoreButton").disabled = data.status === "RUNNING";
-      document.getElementById("endTeamA").disabled = data.status === "FINISH" || data.shotA !== "";
-      document.getElementById("endTeamB").disabled = data.status === "FINISH" || data.shotB !== "";
+      renderResultPanel(data);
       if (typeof applyFinalWarning === "function") applyFinalWarning(data);
+    });
+
+    matchHistoryBody.addEventListener("click", (event) => {
+      const deleteButton = event.target.closest(".history-delete-button");
+      if (!deleteButton || deleteButton.disabled) return;
+
+      const resultId = deleteButton.dataset.resultId;
+      const result = matchResults.find((matchResult) => matchResult.id === resultId);
+      const matchLabel = result
+        ? `คู่ที่ ${result.matchNumber || "-"} (${result.teamNameA || "TEAM A"} vs ${result.teamNameB || "TEAM B"})`
+        : "รายการนี้";
+
+      if (!window.confirm(`ลบ${matchLabel}?`)) return;
+
+      deleteButton.disabled = true;
+      showResultStatus("กำลังลบรายการ...", "waiting");
+
+      socket.emit("match-result-delete", { id: resultId }, (response) => {
+        if (response && response.deleted) {
+          showResultStatus("ลบรายการย้อนหลังแล้ว", "saved");
+        } else {
+          showResultStatus("ไม่พบรายการที่ต้องการลบ", "waiting");
+        }
+      });
     });
   </script>
 </body>

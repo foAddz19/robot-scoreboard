@@ -7,7 +7,6 @@
   let lastWarningSecond = null;
   let warningStarted = false;
   const finalWarningSeconds = 10;
-  const warningAudioStartSeconds = 0;
   const warningAudioSources = [
     "/assets/videoplayback.wav",
     "/assets/videoplayback.mp3",
@@ -55,6 +54,19 @@
     return warningAudio;
   }
 
+  function stopWarningAudio() {
+    if (!warningAudio) return;
+
+    try {
+      warningAudio.pause();
+      warningAudio.currentTime = 0;
+    } catch (error) {
+      // The browser may reject seeking while the audio source is changing.
+    }
+
+    warningAudioPlaying = false;
+  }
+
   function playWarningBeep() {
     const context = getAudioContext();
     if (!context || context.state !== "running") return;
@@ -84,12 +96,7 @@
 
   function seekWarningAudio(audio) {
     try {
-      const safeStart =
-        Number.isFinite(audio.duration) && audio.duration > 0
-          ? Math.min(warningAudioStartSeconds, Math.max(audio.duration - 0.1, 0))
-          : warningAudioStartSeconds;
-
-      audio.currentTime = safeStart;
+      audio.currentTime = 0;
     } catch (error) {
       audio.currentTime = 0;
     }
@@ -176,11 +183,15 @@
     if (!shouldWarn) {
       lastWarningSecond = null;
       warningStarted = false;
+      if (data.status !== "FINISH") {
+        stopWarningAudio();
+      }
       return;
     }
 
     if (!warningStarted) {
       warningStarted = true;
+      lastWarningSecond = remainingSeconds;
       playWarningAudio();
       return;
     }
