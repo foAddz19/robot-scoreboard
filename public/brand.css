@@ -70,7 +70,7 @@ body > * {
 }
 
 .brand-logo {
-  width: min(100%, 260px);
+  width: min(100%, 200px);
   max-height: 132px;
   object-fit: contain;
   justify-self: start;
@@ -220,12 +220,12 @@ body:has(.panel) .brand-strip {
 }
 
 body:has(.panel) .brand-logo {
-  width: min(100%, clamp(220px, 34vh, 320px));
-  max-height: clamp(70px, 17vh, 116px);
+  width: min(100%, clamp(150px, 34vh, 100px));
+  max-height: clamp(40px, 17vh, 116px);
 }
 
 body:has(.panel) .brand-seal {
-  width: clamp(76px, 15vh, var(--brand-seal-size));
+  width: clamp(76px, 30vh, var(--brand-seal-size));
   max-height: clamp(76px, 15vh, var(--brand-seal-size));
 }
 
@@ -569,7 +569,7 @@ body:has(.panel) .reset {
   }
 
   .brand-logo {
-    max-width: 210px;
+    max-width: 200px;
   }
 
   .control-grid {

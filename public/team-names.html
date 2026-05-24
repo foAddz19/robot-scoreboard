@@ -357,14 +357,6 @@
       line-height: 1;
     }
 
-    .result-actions {
-      display: grid;
-      grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
-      gap: 10px;
-      align-items: stretch;
-      margin-bottom: 16px;
-    }
-
     .result-message,
     .history-count {
       min-height: 42px;
@@ -381,6 +373,10 @@
       line-height: 1.15;
       text-align: center;
       overflow-wrap: anywhere;
+    }
+
+    .result-message {
+      margin-bottom: 16px;
     }
 
     .result-message[data-state="saved"],
@@ -417,7 +413,7 @@
 
     .result-history-table {
       width: 100%;
-      min-width: 900px;
+      min-width: 820px;
       border-collapse: collapse;
     }
 
@@ -524,7 +520,6 @@
       .display-tools,
       .text-preview,
       .result-board,
-      .result-actions,
       .action-row {
         grid-template-columns: 1fr;
       }
@@ -682,10 +677,7 @@
           </div>
         </div>
 
-        <div class="result-actions">
-          <button class="green" id="saveMatchButton" type="button">บันทึกผลก่อนครบ 3 นาที</button>
-          <div class="result-message" id="resultMessage" data-state="waiting">ยังไม่ครบ 3 นาที สามารถกดบันทึกเมื่อจบก่อนเวลา</div>
-        </div>
+        <div class="result-message" id="resultMessage" data-state="waiting">รอครบ 3 นาที ระบบจะบันทึกผลอัตโนมัติ</div>
 
         <div class="history-head">
           <h2>ประวัติผลย้อนหลัง</h2>
@@ -697,7 +689,6 @@
             <thead>
               <tr>
                 <th>คู่ที่</th>
-                <th>เวลาแข่ง</th>
                 <th>ทีม A</th>
                 <th>SHOT A</th>
                 <th>ผล</th>
@@ -753,7 +744,6 @@
     const serverStatusLine = document.getElementById("serverStatusLine");
     const messageLine = document.getElementById("messageLine");
     const matchSaveState = document.getElementById("matchSaveState");
-    const saveMatchButton = document.getElementById("saveMatchButton");
     const resultMessage = document.getElementById("resultMessage");
     const matchHistoryTable = document.getElementById("matchHistoryTable");
     const matchHistoryBody = document.getElementById("matchHistoryBody");
@@ -847,28 +837,24 @@
 
     function updateMatchSaveControls() {
       if (!serverConnected) {
-        saveMatchButton.disabled = true;
         matchSaveState.innerText = "RESULT: OFFLINE";
         matchSaveState.dataset.state = "offline";
         return;
       }
 
       if (currentMatchSaved) {
-        saveMatchButton.disabled = true;
         matchSaveState.innerText = "RESULT: SAVED";
         matchSaveState.dataset.state = "saved";
         return;
       }
 
       if (timeElapsed >= matchDuration) {
-        saveMatchButton.disabled = true;
         matchSaveState.innerText = "RESULT: AUTO";
         matchSaveState.dataset.state = "saved";
         return;
       }
 
-      saveMatchButton.disabled = false;
-      matchSaveState.innerText = "RESULT: READY";
+      matchSaveState.innerText = "RESULT: WAITING";
       matchSaveState.dataset.state = "waiting";
     }
 
@@ -922,7 +908,6 @@
       matchResults.forEach((result) => {
         const row = document.createElement("tr");
         appendTextCell(row, result.matchNumber || "-");
-        appendTextCell(row, result.elapsedTime || formatClock(result.elapsedSeconds));
         appendTextCell(row, result.teamNameA || "TEAM A");
         appendTextCell(row, result.shotA || "--.--");
 
@@ -983,7 +968,7 @@
       } else if (timeElapsed >= matchDuration) {
         showResultStatus("ครบเวลา 3 นาที ระบบจะบันทึกผลให้อัตโนมัติ", "saved");
       } else {
-        showResultStatus("ยังไม่ครบ 3 นาที สามารถกดบันทึกเมื่อจบก่อนเวลา", "waiting");
+        showResultStatus("รอครบ 3 นาที ระบบจะบันทึกผลอัตโนมัติ", "waiting");
       }
 
       updateMatchSaveControls();
@@ -1157,21 +1142,6 @@
             showResultStatus("ลบรายการย้อนหลังแล้ว", "saved");
           } else {
             showResultStatus("ไม่พบรายการที่ต้องการลบ", "waiting");
-          }
-        });
-      });
-
-      saveMatchButton.addEventListener("click", () => {
-        if (!serverConnected || saveMatchButton.disabled) return;
-
-        saveMatchButton.disabled = true;
-        showResultStatus("กำลังบันทึกผลการแข่งขัน...", "waiting");
-
-        socket.emit("match-result-save", (response) => {
-          if (response && response.saved) {
-            showResultStatus("บันทึกผลการแข่งขันแล้ว", "saved");
-          } else {
-            showResultStatus("คู่นี้ถูกบันทึกไว้แล้ว", "saved");
           }
         });
       });

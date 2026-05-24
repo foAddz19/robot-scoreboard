@@ -273,16 +273,6 @@ function deleteMatchResult(id) {
   return deleted;
 }
 
-function finishMatchWithResult(mode) {
-  if (timer !== null) {
-    clearInterval(timer);
-    timer = null;
-  }
-
-  status = "FINISH";
-  return saveCurrentMatchResult(mode);
-}
-
 function setTeamNamesVisible(visible) {
   teamNamesVisible = Boolean(visible);
   saveTeamNameData();
@@ -565,16 +555,6 @@ io.on("connection", (socket) => {
 
   socket.on("team-names-hide", () => {
     setTeamNamesVisible(false);
-  });
-
-  socket.on("match-result-save", (callback) => {
-    const saveMode = timeElapsed >= matchDuration ? "auto" : "manual";
-    const saveResult = finishMatchWithResult(saveMode);
-    sendUpdate();
-
-    if (typeof callback === "function") {
-      callback(saveResult);
-    }
   });
 
   socket.on("match-result-delete", (data, callback) => {
