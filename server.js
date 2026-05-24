@@ -380,6 +380,18 @@ function sendUpdate() {
   writeObsFiles();
 }
 
+function fillMissingShotsWithFinishTime() {
+  const finishTime = formatTime(matchDuration);
+
+  if (shotA === "") {
+    shotA = finishTime;
+  }
+
+  if (shotB === "") {
+    shotB = finishTime;
+  }
+}
+
 function startTimer() {
   if (timer !== null) return;
   if (status === "FINISH") {
@@ -402,6 +414,7 @@ function startTimer() {
       clearInterval(timer);
       timer = null;
       status = "FINISH";
+      fillMissingShotsWithFinishTime();
       saveCurrentMatchResult("auto");
     }
 
@@ -447,8 +460,6 @@ function resetTimer(seconds = 180) {
 function addScore(team, point) {
   if (!Number.isFinite(point)) return;
   if (status === "FINISH") return;
-  if (team === "A" && shotA !== "") return;
-  if (team === "B" && shotB !== "") return;
 
   if (team === "A") {
     scoreA += point;
@@ -459,6 +470,10 @@ function addScore(team, point) {
     scoreB += point;
     if (scoreB < 0) scoreB = 0;
   }
+}
+
+function hasRecordedShot(team) {
+  return (team === "A" && shotA !== "") || (team === "B" && shotB !== "");
 }
 
 function recordShot(team) {
@@ -490,6 +505,11 @@ io.on("connection", (socket) => {
     const team = data.team;
     const point = Number(data.point);
     const safePoint = Number.isFinite(point) ? point : 20;
+
+    if (status === "FINISH" || hasRecordedShot(team)) {
+      sendUpdate();
+      return;
+    }
 
     addScore(team, safePoint);
     recordShot(team);

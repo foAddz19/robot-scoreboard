@@ -354,10 +354,14 @@
       });
     }
 
-    function setScoreButtonsEnabled(enabled) {
-      document.querySelectorAll("[data-score], #endMatchButton").forEach((button) => {
+    function setPointButtonsEnabled(enabled) {
+      document.querySelectorAll("[data-score]").forEach((button) => {
         button.disabled = !enabled;
       });
+    }
+
+    function setEndButtonEnabled(enabled) {
+      document.getElementById("endMatchButton").disabled = !enabled;
     }
 
     function showOffline() {
@@ -421,7 +425,8 @@
         status.innerText = data.status;
         status.dataset.state = data.status;
         document.getElementById("resetScoreButton").disabled = data.status === "RUNNING";
-        setScoreButtonsEnabled(data.status !== "FINISH" && data.shotA === "");
+        setPointButtonsEnabled(data.status !== "FINISH");
+        setEndButtonEnabled(data.status !== "FINISH" && data.shotA === "");
         if (typeof applyFinalWarning === "function") applyFinalWarning(data);
       });
     }

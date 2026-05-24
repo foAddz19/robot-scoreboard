@@ -307,14 +307,14 @@
 
   <main class="panel">
     <div class="brand-strip">
-      <img class="brand-logo" src="/assets/robot-contest-logo.png" alt="R-VEC Robot Contest">
+      <img class="brand-logo" src="/assets/vec-seal.png" alt="R-VEC Robot Contest">
 
       <div class="event-title">
         <strong>VEC Service Intelligence Robot</strong>
         <span>LIVE SCOREBOARD</span>
       </div>
 
-      <img class="brand-seal" src="/assets/vec-seal.png" alt="Vocational Education Commission">
+      <img class="brand-seal" src="/assets/robot-contest-logo.png" alt="Vocational Education Commission">
     </div>
 
     <div class="top-row">
@@ -356,10 +356,14 @@
       });
     }
 
-    function setScoreButtonsEnabled(enabled) {
-      document.querySelectorAll("[data-score], #endMatchButton").forEach((button) => {
+    function setPointButtonsEnabled(enabled) {
+      document.querySelectorAll("[data-score]").forEach((button) => {
         button.disabled = !enabled;
       });
+    }
+
+    function setEndButtonEnabled(enabled) {
+      document.getElementById("endMatchButton").disabled = !enabled;
     }
 
     function showOffline() {
@@ -423,7 +427,8 @@
         status.innerText = data.status;
         status.dataset.state = data.status;
         document.getElementById("resetScoreButton").disabled = data.status === "RUNNING";
-        setScoreButtonsEnabled(data.status !== "FINISH" && data.shotB === "");
+        setPointButtonsEnabled(data.status !== "FINISH");
+        setEndButtonEnabled(data.status !== "FINISH" && data.shotB === "");
         if (typeof applyFinalWarning === "function") applyFinalWarning(data);
       });
     }

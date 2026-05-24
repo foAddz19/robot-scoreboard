@@ -220,7 +220,7 @@ body:has(.panel) .brand-strip {
 }
 
 body:has(.panel) .brand-logo {
-  width: min(100%, clamp(150px, 34vh, 100px));
+  width: min(100%, clamp(100px, 34vh, 150px));
   max-height: clamp(40px, 17vh, 116px);
 }
 
