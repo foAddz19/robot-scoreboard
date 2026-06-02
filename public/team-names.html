@@ -288,6 +288,13 @@
       line-height: 1.08;
     }
 
+    .current-team small {
+      color: #fff8d6;
+      font-size: 15px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
     .result-section {
       text-align: left;
     }
@@ -413,7 +420,7 @@
 
     .result-history-table {
       width: 100%;
-      min-width: 820px;
+      min-width: 980px;
       border-collapse: collapse;
     }
 
@@ -610,6 +617,7 @@
             <div class="current-team">
               <span>TEAM A</span>
               <strong id="currentTeamA">TEAM A</strong>
+              <small id="currentTeamWeightA">WEIGHT -</small>
             </div>
             <label for="teamASelect">เลือกชื่อทีม A</label>
             <select id="teamASelect"></select>
@@ -619,6 +627,7 @@
             <div class="current-team">
               <span>TEAM B</span>
               <strong id="currentTeamB">TEAM B</strong>
+              <small id="currentTeamWeightB">WEIGHT -</small>
             </div>
             <label for="teamBSelect">เลือกชื่อทีม B</label>
             <select id="teamBSelect"></select>
@@ -661,6 +670,7 @@
             <strong id="resultTeamA">TEAM A</strong>
             <b id="resultScoreA">0</b>
             <span>SHOT <em id="resultShotA">--.--</em></span>
+            <span>WEIGHT <em id="resultWeightA">-</em></span>
           </div>
 
           <div class="live-clock">
@@ -674,6 +684,7 @@
             <strong id="resultTeamB">TEAM B</strong>
             <b id="resultScoreB">0</b>
             <span>SHOT <em id="resultShotB">--.--</em></span>
+            <span>WEIGHT <em id="resultWeightB">-</em></span>
           </div>
         </div>
 
@@ -690,9 +701,11 @@
               <tr>
                 <th>คู่ที่</th>
                 <th>ทีม A</th>
+                <th>WEIGHT A</th>
                 <th>SHOT A</th>
                 <th>ผล</th>
                 <th>ทีม B</th>
+                <th>WEIGHT B</th>
                 <th>SHOT B</th>
                 <th>ผู้ชนะ</th>
                 <th>บันทึก</th>
@@ -711,6 +724,8 @@
           <h2>เพิ่มชื่อทีม</h2>
           <label for="addTeamName">ชื่อทีมใหม่</label>
           <input id="addTeamName" type="text" autocomplete="off" maxlength="80" placeholder="พิมพ์ชื่อทีม">
+          <label for="addTeamWeight">น้ำหนัก ROBOT (kg)</label>
+          <input id="addTeamWeight" type="number" min="0.001" step="0.001" placeholder="เช่น 12.5" required>
           <button class="green" type="submit">เพิ่มทีม</button>
         </form>
       </section>
@@ -722,6 +737,8 @@
           <select id="editTeamSelect"></select>
           <label for="editTeamName">แก้ไขชื่อ</label>
           <input id="editTeamName" type="text" autocomplete="off" maxlength="80" placeholder="พิมพ์ชื่อใหม่">
+          <label for="editTeamWeight">น้ำหนัก ROBOT (kg)</label>
+          <input id="editTeamWeight" type="number" min="0.001" step="0.001" placeholder="เช่น 12.5" required>
           <div class="action-row">
             <button class="orange" type="submit">บันทึก</button>
             <button class="red" id="deleteTeamButton" type="button">ลบทีม</button>
@@ -737,7 +754,9 @@
     const teamBSelect = document.getElementById("teamBSelect");
     const editTeamSelect = document.getElementById("editTeamSelect");
     const editTeamName = document.getElementById("editTeamName");
+    const editTeamWeight = document.getElementById("editTeamWeight");
     const addTeamName = document.getElementById("addTeamName");
+    const addTeamWeight = document.getElementById("addTeamWeight");
     const deleteTeamButton = document.getElementById("deleteTeamButton");
     const showTeamNamesButton = document.getElementById("showTeamNamesButton");
     const hideTeamNamesButton = document.getElementById("hideTeamNamesButton");
@@ -752,6 +771,7 @@
     const controls = document.querySelectorAll("select, input, button");
 
     let teamNames = ["TEAM A", "TEAM B"];
+    let teamWeights = {};
     let teamNameA = "TEAM A";
     let teamNameB = "TEAM B";
     let teamNamesVisible = true;
@@ -766,6 +786,18 @@
 
     function cleanName(value) {
       return String(value || "").trim().replace(/\s+/g, " ").slice(0, 80);
+    }
+
+    function cleanWeight(value) {
+      if (value === "" || value === null || value === undefined) return null;
+
+      const weight = Number(value);
+      return Number.isFinite(weight) && weight > 0 ? weight : null;
+    }
+
+    function formatWeight(value) {
+      const weight = cleanWeight(value);
+      return weight === null ? "-" : `${weight} kg`;
     }
 
     function setControlsEnabled(enabled) {
@@ -886,6 +918,15 @@
         if (shotSecondsB < shotSecondsA) return result.teamNameB || "TEAM B";
       }
 
+      const resultWeightA = cleanWeight(result.teamWeightA);
+      const resultWeightB = cleanWeight(result.teamWeightB);
+      const shotTimesAreEqual = shotSecondsA !== null && shotSecondsB !== null && shotSecondsA === shotSecondsB;
+
+      if (shotTimesAreEqual && resultWeightA !== null && resultWeightB !== null) {
+        if (resultWeightA < resultWeightB) return result.teamNameA || "TEAM A";
+        if (resultWeightB < resultWeightA) return result.teamNameB || "TEAM B";
+      }
+
       return "เสมอ";
     }
 
@@ -909,6 +950,7 @@
         const row = document.createElement("tr");
         appendTextCell(row, result.matchNumber || "-");
         appendTextCell(row, result.teamNameA || "TEAM A");
+        appendTextCell(row, formatWeight(result.teamWeightA));
         appendTextCell(row, result.shotA || "--.--");
 
         const scoreCell = document.createElement("td");
@@ -919,6 +961,7 @@
         row.appendChild(scoreCell);
 
         appendTextCell(row, result.teamNameB || "TEAM B");
+        appendTextCell(row, formatWeight(result.teamWeightB));
         appendTextCell(row, result.shotB || "--.--");
         appendTextCell(row, getWinnerLabel(result));
 
@@ -960,6 +1003,8 @@
       document.getElementById("resultScoreB").innerText = scoreB;
       document.getElementById("resultShotA").innerText = data.shotA || "--.--";
       document.getElementById("resultShotB").innerText = data.shotB || "--.--";
+      document.getElementById("resultWeightA").innerText = formatWeight(data.teamWeightA);
+      document.getElementById("resultWeightB").innerText = formatWeight(data.teamWeightB);
       document.getElementById("resultTime").innerText = data.time || formatClock(timeElapsed);
       document.getElementById("resultStatus").innerText = data.status || "STOP";
 
@@ -982,7 +1027,7 @@
       teamNames.forEach((teamName) => {
         const option = document.createElement("option");
         option.value = teamName;
-        option.innerText = teamName;
+        option.innerText = `${teamName} (${formatWeight(teamWeights[teamName])})`;
         select.appendChild(option);
       });
 
@@ -997,12 +1042,15 @@
       teamNames = Array.isArray(data.teamNames) && data.teamNames.length
         ? data.teamNames
         : ["TEAM A", "TEAM B"];
+      teamWeights = data.teamWeights && typeof data.teamWeights === "object" ? data.teamWeights : {};
       teamNameA = data.teamNameA || "TEAM A";
       teamNameB = data.teamNameB || "TEAM B";
       teamNamesVisible = data.teamNamesVisible !== false;
 
       document.getElementById("currentTeamA").innerText = teamNameA;
       document.getElementById("currentTeamB").innerText = teamNameB;
+      document.getElementById("currentTeamWeightA").innerText = `WEIGHT ${formatWeight(data.teamWeightA)}`;
+      document.getElementById("currentTeamWeightB").innerText = `WEIGHT ${formatWeight(data.teamWeightB)}`;
       document.getElementById("textPreviewA").innerText = teamNamesVisible ? teamNameA : "";
       document.getElementById("textPreviewB").innerText = teamNamesVisible ? teamNameB : "";
 
@@ -1012,6 +1060,7 @@
 
       if (!editIsDirty) {
         editTeamName.value = editTeamSelect.value || "";
+        editTeamWeight.value = cleanWeight(teamWeights[editTeamSelect.value]) || "";
       }
 
       deleteTeamButton.disabled = teamNames.length <= 1;
@@ -1072,22 +1121,29 @@
       document.getElementById("addTeamForm").addEventListener("submit", (event) => {
         event.preventDefault();
         const name = cleanName(addTeamName.value);
-        if (!name) {
-          showStatus("กรุณาพิมพ์ชื่อทีม");
+        const weight = cleanWeight(addTeamWeight.value);
+        if (!name || weight === null) {
+          showStatus("กรุณาพิมพ์ชื่อทีมและน้ำหนัก ROBOT");
           return;
         }
 
-        socket.emit("team-name-add", { name });
+        socket.emit("team-name-add", { name, weight });
         addTeamName.value = "";
+        addTeamWeight.value = "";
         showStatus("เพิ่มชื่อทีมแล้ว");
       });
 
       editTeamSelect.addEventListener("change", () => {
         editIsDirty = false;
         editTeamName.value = editTeamSelect.value || "";
+        editTeamWeight.value = cleanWeight(teamWeights[editTeamSelect.value]) || "";
       });
 
       editTeamName.addEventListener("input", () => {
+        editIsDirty = true;
+      });
+
+      editTeamWeight.addEventListener("input", () => {
         editIsDirty = true;
       });
 
@@ -1095,14 +1151,16 @@
         event.preventDefault();
         const oldName = editTeamSelect.value;
         const newName = cleanName(editTeamName.value);
-        if (!oldName || !newName) {
-          showStatus("กรุณาเลือกทีมและพิมพ์ชื่อใหม่");
+        const weight = cleanWeight(editTeamWeight.value);
+        if (!oldName || !newName || weight === null) {
+          showStatus("กรุณาเลือกทีม พิมพ์ชื่อ และน้ำหนัก ROBOT");
           return;
         }
 
         socket.emit("team-name-edit", {
           oldName,
-          newName
+          newName,
+          weight
         });
         editIsDirty = false;
         showStatus("บันทึกชื่อทีมแล้ว");

@@ -17,6 +17,7 @@ let scoreB = 0;
 let shotA = "";
 let shotB = "";
 let teamNames = ["TEAM A", "TEAM B"];
+let teamWeights = {};
 let teamNameA = "TEAM A";
 let teamNameB = "TEAM B";
 let teamNamesVisible = true;
@@ -40,6 +41,26 @@ const matchResultsFile = path.join(obsDir, "match-results.json");
 
 function cleanTeamName(value) {
   return String(value || "").trim().replace(/\s+/g, " ").slice(0, 80);
+}
+
+function normalizeTeamWeight(value) {
+  if (value === "" || value === null || value === undefined) return null;
+
+  const weight = Number(value);
+  return Number.isFinite(weight) && weight > 0 ? weight : null;
+}
+
+function getTeamWeight(name) {
+  const cleanName = cleanTeamName(name);
+  return cleanName ? normalizeTeamWeight(teamWeights[cleanName]) : null;
+}
+
+function setTeamWeight(name, weight) {
+  const cleanName = cleanTeamName(name);
+  const safeWeight = normalizeTeamWeight(weight);
+  if (!cleanName || safeWeight === null) return;
+
+  teamWeights[cleanName] = safeWeight;
 }
 
 function findTeamNameIndex(name) {
@@ -83,6 +104,8 @@ function loadTeamNameData() {
     try {
       const savedData = JSON.parse(fs.readFileSync(teamDataFile, "utf8"));
       normalizeTeamList(savedData.teamNames);
+      teamWeights = {};
+      teamNames.forEach((teamName) => setTeamWeight(teamName, savedData.teamWeights && savedData.teamWeights[teamName]));
       teamNameA = cleanTeamName(savedData.teamNameA) || teamNames[0] || "TEAM A";
       teamNameB = cleanTeamName(savedData.teamNameB) || teamNames[1] || teamNames[0] || "TEAM B";
       teamNamesVisible = typeof savedData.teamNamesVisible === "boolean" ? savedData.teamNamesVisible : true;
@@ -103,6 +126,7 @@ function loadTeamNameData() {
 function saveTeamNameData() {
   const data = {
     teamNames,
+    teamWeights,
     teamNameA,
     teamNameB,
     teamNamesVisible,
@@ -150,7 +174,7 @@ function parseShotTime(value) {
   return minutes * 60 + seconds;
 }
 
-function getWinnerInfoFromValues(firstScore, secondScore, firstShot, secondShot, firstName, secondName) {
+function getWinnerInfoFromValues(firstScore, secondScore, firstShot, secondShot, firstWeight, secondWeight, firstName, secondName) {
   const safeScoreA = Number(firstScore) || 0;
   const safeScoreB = Number(secondScore) || 0;
 
@@ -187,6 +211,26 @@ function getWinnerInfoFromValues(firstScore, secondScore, firstShot, secondShot,
     }
   }
 
+  const safeWeightA = normalizeTeamWeight(firstWeight);
+  const safeWeightB = normalizeTeamWeight(secondWeight);
+  const shotTimesAreEqual = shotSecondsA !== null && shotSecondsB !== null && shotSecondsA === shotSecondsB;
+
+  if (shotTimesAreEqual && safeWeightA !== null && safeWeightB !== null) {
+    if (safeWeightA < safeWeightB) {
+      return {
+        winner: "A",
+        winnerName: firstName || "TEAM A",
+      };
+    }
+
+    if (safeWeightB < safeWeightA) {
+      return {
+        winner: "B",
+        winnerName: secondName || "TEAM B",
+      };
+    }
+  }
+
   return {
     winner: "DRAW",
     winnerName: "DRAW",
@@ -194,7 +238,16 @@ function getWinnerInfoFromValues(firstScore, secondScore, firstShot, secondShot,
 }
 
 function getWinnerInfo() {
-  return getWinnerInfoFromValues(scoreA, scoreB, shotA, shotB, teamNameA, teamNameB);
+  return getWinnerInfoFromValues(
+    scoreA,
+    scoreB,
+    shotA,
+    shotB,
+    getTeamWeight(teamNameA),
+    getTeamWeight(teamNameB),
+    teamNameA,
+    teamNameB
+  );
 }
 
 function normalizeMatchResult(result) {
@@ -204,6 +257,8 @@ function normalizeMatchResult(result) {
     safeResult.scoreB,
     safeResult.shotA,
     safeResult.shotB,
+    safeResult.teamWeightA,
+    safeResult.teamWeightB,
     safeResult.teamNameA,
     safeResult.teamNameB
   );
@@ -232,6 +287,8 @@ function saveCurrentMatchResult(mode) {
     mode: saveMode,
     teamNameA,
     teamNameB,
+    teamWeightA: getTeamWeight(teamNameA),
+    teamWeightB: getTeamWeight(teamNameB),
     scoreA,
     scoreB,
     shotA,
@@ -295,7 +352,7 @@ function setTeamName(team, name) {
   sendUpdate();
 }
 
-function editTeamName(oldName, newName) {
+function editTeamName(oldName, newName, weight) {
   const cleanOldName = cleanTeamName(oldName);
   const cleanNewName = cleanTeamName(newName);
   const index = findTeamNameIndex(cleanOldName);
@@ -304,12 +361,17 @@ function editTeamName(oldName, newName) {
 
   const duplicateIndex = findTeamNameIndex(cleanNewName);
   if (duplicateIndex !== -1 && duplicateIndex !== index) {
+    setTeamWeight(teamNames[duplicateIndex], weight);
     if (teamNameA === teamNames[index]) teamNameA = teamNames[duplicateIndex];
     if (teamNameB === teamNames[index]) teamNameB = teamNames[duplicateIndex];
+    delete teamWeights[teamNames[index]];
     teamNames.splice(index, 1);
   } else {
     const previousName = teamNames[index];
     teamNames[index] = cleanNewName;
+    const previousWeight = getTeamWeight(previousName);
+    delete teamWeights[previousName];
+    setTeamWeight(cleanNewName, weight === undefined ? previousWeight : weight);
     if (teamNameA === previousName) teamNameA = cleanNewName;
     if (teamNameB === previousName) teamNameB = cleanNewName;
   }
@@ -325,6 +387,7 @@ function deleteTeamName(name) {
 
   const deletedName = teamNames[index];
   teamNames.splice(index, 1);
+  delete teamWeights[deletedName];
 
   if (teamNameA === deletedName) {
     teamNameA = teamNames.find((teamName) => teamName !== teamNameB) || teamNames[0] || "TEAM A";
@@ -363,8 +426,11 @@ function sendUpdate() {
     shotA,
     shotB,
     teamNames,
+    teamWeights,
     teamNameA,
     teamNameB,
+    teamWeightA: getTeamWeight(teamNameA),
+    teamWeightB: getTeamWeight(teamNameB),
     teamNamesVisible,
     matchResults,
     currentMatchSaved,
@@ -551,14 +617,16 @@ io.on("connection", (socket) => {
   });
 
   socket.on("team-name-add", (data) => {
-    if (addTeamNameToList(data && data.name)) {
+    const teamName = addTeamNameToList(data && data.name);
+    if (teamName) {
+      setTeamWeight(teamName, data && data.weight);
       saveTeamNameData();
       sendUpdate();
     }
   });
 
   socket.on("team-name-edit", (data) => {
-    editTeamName(data && data.oldName, data && data.newName);
+    editTeamName(data && data.oldName, data && data.newName, data && data.weight);
   });
 
   socket.on("team-name-select", (data) => {

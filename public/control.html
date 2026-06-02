@@ -306,7 +306,7 @@
 
     .result-history-table {
       width: 100%;
-      min-width: 820px;
+      min-width: 980px;
       border-collapse: collapse;
     }
 
@@ -515,6 +515,7 @@
             <strong id="resultTeamA">TEAM A</strong>
             <b id="resultScoreA">0</b>
             <span>SHOT <em id="resultShotA">--.--</em></span>
+            <span>WEIGHT <em id="resultWeightA">-</em></span>
           </div>
 
           <div class="live-clock">
@@ -528,6 +529,7 @@
             <strong id="resultTeamB">TEAM B</strong>
             <b id="resultScoreB">0</b>
             <span>SHOT <em id="resultShotB">--.--</em></span>
+            <span>WEIGHT <em id="resultWeightB">-</em></span>
           </div>
         </div>
 
@@ -544,9 +546,11 @@
               <tr>
                 <th>คู่ที่</th>
                 <th>ทีม A</th>
+                <th>WEIGHT A</th>
                 <th>SHOT A</th>
                 <th>ผล</th>
                 <th>ทีม B</th>
+                <th>WEIGHT B</th>
                 <th>SHOT B</th>
                 <th>ผู้ชนะ</th>
                 <th>บันทึก</th>
@@ -656,6 +660,18 @@
       return minutes * 60 + seconds;
     }
 
+    function cleanWeight(value) {
+      if (value === "" || value === null || value === undefined) return null;
+
+      const weight = Number(value);
+      return Number.isFinite(weight) && weight > 0 ? weight : null;
+    }
+
+    function formatWeight(value) {
+      const weight = cleanWeight(value);
+      return weight === null ? "-" : `${weight} kg`;
+    }
+
     function getWinnerLabel(result) {
       if (!result) return "เสมอ";
 
@@ -671,6 +687,15 @@
       if (shotSecondsA !== null && shotSecondsB !== null) {
         if (shotSecondsA < shotSecondsB) return result.teamNameA || "TEAM A";
         if (shotSecondsB < shotSecondsA) return result.teamNameB || "TEAM B";
+      }
+
+      const resultWeightA = cleanWeight(result.teamWeightA);
+      const resultWeightB = cleanWeight(result.teamWeightB);
+      const shotTimesAreEqual = shotSecondsA !== null && shotSecondsB !== null && shotSecondsA === shotSecondsB;
+
+      if (shotTimesAreEqual && resultWeightA !== null && resultWeightB !== null) {
+        if (resultWeightA < resultWeightB) return result.teamNameA || "TEAM A";
+        if (resultWeightB < resultWeightA) return result.teamNameB || "TEAM B";
       }
 
       return "เสมอ";
@@ -696,6 +721,7 @@
         const row = document.createElement("tr");
         appendTextCell(row, result.matchNumber || "-");
         appendTextCell(row, result.teamNameA || "TEAM A");
+        appendTextCell(row, formatWeight(result.teamWeightA));
         appendTextCell(row, result.shotA || "--.--");
 
         const scoreCell = document.createElement("td");
@@ -706,6 +732,7 @@
         row.appendChild(scoreCell);
 
         appendTextCell(row, result.teamNameB || "TEAM B");
+        appendTextCell(row, formatWeight(result.teamWeightB));
         appendTextCell(row, result.shotB || "--.--");
         appendTextCell(row, getWinnerLabel(result));
 
@@ -746,6 +773,8 @@
       document.getElementById("resultScoreB").innerText = Number(data.scoreB) || 0;
       document.getElementById("resultShotA").innerText = data.shotA || "--.--";
       document.getElementById("resultShotB").innerText = data.shotB || "--.--";
+      document.getElementById("resultWeightA").innerText = formatWeight(data.teamWeightA);
+      document.getElementById("resultWeightB").innerText = formatWeight(data.teamWeightB);
       document.getElementById("resultTime").innerText = data.time || formatClock(timeElapsed);
       document.getElementById("resultStatus").innerText = data.status || "STOP";
 

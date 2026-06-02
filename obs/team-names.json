@@ -1,12 +1,13 @@
 {
   "teamNames": [
-    "TEAM A",
-    "วิทยาลัยเกษตรและเทคโนโลยีร้อยเอ็ด",
-    "ศรีอินทนิน",
-    "ข้าวหอมมะลิ",
-    "บังไฟโก้"
+    "RCAT ROBOT",
+    "ข้าวหอมมะลิ 101"
   ],
-  "teamNameA": "ศรีอินทนิน",
-  "teamNameB": "ข้าวหอมมะลิ",
+  "teamWeights": {
+    "RCAT ROBOT": 12.5,
+    "ข้าวหอมมะลิ 101": 20.6
+  },
+  "teamNameA": "RCAT ROBOT",
+  "teamNameB": "ข้าวหอมมะลิ 101",
   "teamNamesVisible": true
 }
