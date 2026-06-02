@@ -17,24 +17,5 @@
     "matchDuration": 180,
     "winner": "A",
     "winnerName": "RCAT ROBOT"
-  },
-  {
-    "id": "1780394403658-670430",
-    "matchNumber": 1,
-    "savedAt": "2026-06-02T10:00:03.658Z",
-    "mode": "auto",
-    "teamNameA": "ข้าวหอมมะลิ 101",
-    "teamNameB": "RCAT ROBOT",
-    "teamWeightA": 20.6,
-    "teamWeightB": 12.5,
-    "scoreA": 200,
-    "scoreB": 200,
-    "shotA": "03.00",
-    "shotB": "03.00",
-    "elapsedSeconds": 180,
-    "elapsedTime": "03.00",
-    "matchDuration": 180,
-    "winner": "B",
-    "winnerName": "RCAT ROBOT"
   }
 ]

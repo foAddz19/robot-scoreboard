@@ -297,6 +297,13 @@
       white-space: nowrap;
     }
 
+    .history-tools {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
     .history-table-wrap {
       overflow-x: auto;
       border: 1px solid rgba(255, 255, 255, 0.12);
@@ -347,19 +354,33 @@
       white-space: nowrap;
     }
 
-    .history-delete-cell {
-      width: 72px;
+    .history-action-cell {
+      width: 146px;
       text-align: center !important;
     }
 
+    .history-row-actions {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .history-print-button,
     .history-delete-button {
       min-width: 48px;
       min-height: 36px;
       padding: 8px 10px;
       border-color: rgba(255, 255, 255, 0.18) !important;
-      background: var(--red);
       font-size: 15px;
       box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.22);
+    }
+
+    .history-print-button {
+      background: var(--blue);
+    }
+
+    .history-delete-button {
+      background: var(--red);
     }
 
     .save-mode.auto {
@@ -404,6 +425,15 @@
       transform: none;
     }
 
+    .history-tools .pdf-download-button {
+      min-width: 168px;
+      min-height: 36px;
+      padding: 8px 12px;
+      background: var(--blue);
+      font-size: 15px;
+      box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.22);
+    }
+
     .green {
       background: var(--green);
     }
@@ -435,6 +465,10 @@
         justify-items: stretch;
       }
 
+      .history-tools {
+        display: grid;
+      }
+
       .live-score[data-side="B"] {
         text-align: left;
       }
@@ -461,8 +495,8 @@
     <div class="brand-strip">
       <img class="brand-logo" src="/assets/vec-seal.png" alt="R-VEC Robot Contest">
       <div class="event-title">
-        <strong>ROBOT CONTEST</strong>
-        <span>CONTROL PANEL</span>
+        <span>VEC Service Intelligence Robot</span>
+        <h2>CONTROL PANEL</h2>
       </div>
       <img class="brand-seal" src="/assets/robot-contest-logo.png" alt="Vocational Education Commission">
     </div>
@@ -537,7 +571,10 @@
 
         <div class="history-head">
           <h2>ประวัติผลย้อนหลัง</h2>
-          <div class="history-count" id="historyCount">0 รายการ</div>
+          <div class="history-tools">
+            <div class="history-count" id="historyCount">0 รายการ</div>
+            <button class="pdf-download-button" id="pdfDownloadButton" type="button" disabled>พิมพ์ / บันทึก PDF</button>
+          </div>
         </div>
 
         <div class="history-table-wrap">
@@ -555,7 +592,7 @@
                 <th>ผู้ชนะ</th>
                 <th>บันทึก</th>
                 <th>เวลาบันทึก</th>
-                <th>ลบ</th>
+                <th>จัดการ</th>
               </tr>
             </thead>
             <tbody id="matchHistoryBody"></tbody>
@@ -577,6 +614,7 @@
     const matchHistoryBody = document.getElementById("matchHistoryBody");
     const emptyHistory = document.getElementById("emptyHistory");
     const historyCount = document.getElementById("historyCount");
+    const pdfDownloadButton = document.getElementById("pdfDownloadButton");
 
     let matchResults = [];
     let serverConnected = false;
@@ -708,9 +746,71 @@
       return cell;
     }
 
+    function printMatchResults(resultId) {
+      const printableResults = resultId
+        ? matchResults.filter((result) => result.id === resultId)
+        : matchResults;
+
+      if (printableResults.length === 0) {
+        showResultStatus("ยังไม่มีประวัติการแข่งขันสำหรับบันทึก PDF", "waiting");
+        return;
+      }
+
+      const reportWindow = window.open("", "_blank");
+      if (!reportWindow) {
+        showResultStatus("กรุณาอนุญาต popup เพื่อเปิดรายงาน PDF", "waiting");
+        return;
+      }
+
+      const reportDocument = reportWindow.document;
+      reportDocument.open();
+      reportDocument.write("<!DOCTYPE html><html lang=\"th\"><head><meta charset=\"UTF-8\"><title>รายงานผลการแข่งขัน</title></head><body></body></html>");
+      reportDocument.close();
+
+      const style = reportDocument.createElement("style");
+      style.textContent = `
+        @page { size: A4 landscape; margin: 12mm; }
+        body { margin: 0; color: #111; font-family: Arial, "Noto Sans Thai", sans-serif; }
+        h1 { margin: 0 0 6px; font-size: 22px; }
+        p { margin: 0 0 14px; color: #444; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 7px 8px; border: 1px solid #999; font-size: 11px; line-height: 1.25; text-align: left; vertical-align: middle; }
+        th { background: #e8eef7; font-weight: 800; white-space: nowrap; }
+        .score-pill, .save-mode { font-weight: 800; white-space: nowrap; }
+      `;
+      reportDocument.head.appendChild(style);
+
+      const heading = reportDocument.createElement("h1");
+      heading.innerText = "รายงานผลการแข่งขัน ROBOT CONTEST";
+      reportDocument.body.appendChild(heading);
+
+      const generatedAt = reportDocument.createElement("p");
+      generatedAt.innerText = `จำนวน ${printableResults.length} รายการ | สร้างรายงาน ${new Date().toLocaleString("th-TH")}`;
+      reportDocument.body.appendChild(generatedAt);
+
+      const printableTable = reportDocument.importNode(matchHistoryTable, true);
+      printableTable.removeAttribute("id");
+      printableTable.hidden = false;
+      printableTable.querySelectorAll("th:last-child, td:last-child").forEach((cell) => cell.remove());
+      if (resultId) {
+        printableTable.querySelectorAll("tbody tr").forEach((row) => {
+          if (row.dataset.resultId !== resultId) row.remove();
+        });
+      }
+      reportDocument.body.appendChild(printableTable);
+
+      reportWindow.opener = null;
+      reportWindow.addEventListener("afterprint", () => reportWindow.close());
+      setTimeout(() => {
+        reportWindow.focus();
+        reportWindow.print();
+      }, 150);
+    }
+
     function renderHistory(results) {
       matchResults = Array.isArray(results) ? results : [];
       historyCount.innerText = `${matchResults.length} รายการ`;
+      pdfDownloadButton.disabled = matchResults.length === 0;
       matchHistoryBody.innerHTML = "";
 
       const hasHistory = matchResults.length > 0;
@@ -719,6 +819,7 @@
 
       matchResults.forEach((result) => {
         const row = document.createElement("tr");
+        row.dataset.resultId = result.id || "";
         appendTextCell(row, result.matchNumber || "-");
         appendTextCell(row, result.teamNameA || "TEAM A");
         appendTextCell(row, formatWeight(result.teamWeightA));
@@ -746,16 +847,26 @@
 
         appendTextCell(row, formatSavedAt(result.savedAt));
 
-        const deleteCell = document.createElement("td");
-        deleteCell.className = "history-delete-cell";
+        const actionCell = document.createElement("td");
+        actionCell.className = "history-action-cell";
+        const actionButtons = document.createElement("div");
+        actionButtons.className = "history-row-actions";
+        const printButton = document.createElement("button");
+        printButton.className = "history-print-button";
+        printButton.type = "button";
+        printButton.dataset.resultId = result.id || "";
+        printButton.disabled = !result.id;
+        printButton.innerText = "พิมพ์";
         const deleteButton = document.createElement("button");
         deleteButton.className = "history-delete-button";
         deleteButton.type = "button";
         deleteButton.dataset.resultId = result.id || "";
         deleteButton.disabled = !serverConnected || !result.id;
         deleteButton.innerText = "ลบ";
-        deleteCell.appendChild(deleteButton);
-        row.appendChild(deleteCell);
+        actionButtons.appendChild(printButton);
+        actionButtons.appendChild(deleteButton);
+        actionCell.appendChild(actionButtons);
+        row.appendChild(actionCell);
 
         matchHistoryBody.appendChild(row);
       });
@@ -817,6 +928,12 @@
     });
 
     matchHistoryBody.addEventListener("click", (event) => {
+      const printButton = event.target.closest(".history-print-button");
+      if (printButton && !printButton.disabled) {
+        printMatchResults(printButton.dataset.resultId);
+        return;
+      }
+
       const deleteButton = event.target.closest(".history-delete-button");
       if (!deleteButton || deleteButton.disabled) return;
 
@@ -839,6 +956,8 @@
         }
       });
     });
+
+    pdfDownloadButton.addEventListener("click", () => printMatchResults());
   </script>
 </body>
 </html>
