@@ -48,6 +48,7 @@ if (!fs.existsSync(obsDir)) {
 
 const teamDataFile = path.join(obsDir, "team-names.json");
 const matchResultsFile = path.join(obsDir, "match-results.json");
+const liveMatchStateFile = path.join(obsDir, "live-match-state.json");
 
 function cleanTeamName(value) {
   return String(value || "").trim().replace(/\s+/g, " ").slice(0, 80);
@@ -159,6 +160,63 @@ function loadMatchResults() {
 
 function saveMatchResults() {
   fs.writeFileSync(matchResultsFile, JSON.stringify(matchResults, null, 2));
+}
+
+function saveLiveMatchState() {
+  const data = {
+    scoreA,
+    scoreB,
+    shotA,
+    shotB,
+    teamNameA,
+    teamNameB,
+    timeElapsed,
+    matchDuration,
+    status,
+    currentMatchSaved,
+    currentMatchSavedResultId,
+    savedAt: new Date().toISOString(),
+  };
+
+  fs.writeFileSync(liveMatchStateFile, JSON.stringify(data, null, 2));
+}
+
+function loadLiveMatchState() {
+  if (!fs.existsSync(liveMatchStateFile)) return;
+
+  try {
+    const savedData = JSON.parse(fs.readFileSync(liveMatchStateFile, "utf8"));
+    const savedDuration = Number(savedData.matchDuration);
+    const savedElapsed = Number(savedData.timeElapsed);
+    const savedScoreA = Number(savedData.scoreA);
+    const savedScoreB = Number(savedData.scoreB);
+    const savedStatus = String(savedData.status || "STOP").toUpperCase();
+    const validStatuses = new Set(["STOP", "RUNNING", "FINISH"]);
+
+    scoreA = Number.isFinite(savedScoreA) ? Math.max(Math.floor(savedScoreA), 0) : 0;
+    scoreB = Number.isFinite(savedScoreB) ? Math.max(Math.floor(savedScoreB), 0) : 0;
+    matchDuration = Number.isFinite(savedDuration) && savedDuration > 0 ? Math.floor(savedDuration) : 180;
+    timeElapsed = Number.isFinite(savedElapsed) ? Math.min(Math.max(Math.floor(savedElapsed), 0), matchDuration) : 0;
+    shotA = String(savedData.shotA || "");
+    shotB = String(savedData.shotB || "");
+    teamNameA = addTeamNameToList(savedData.teamNameA || teamNameA) || teamNameA;
+    teamNameB = addTeamNameToList(savedData.teamNameB || teamNameB) || teamNameB;
+    status = validStatuses.has(savedStatus) ? savedStatus : "STOP";
+
+    if (status === "RUNNING") {
+      status = "STOP";
+    }
+
+    const savedResultId = String(savedData.currentMatchSavedResultId || "");
+    currentMatchSaved = Boolean(
+      savedData.currentMatchSaved &&
+      savedResultId &&
+      matchResults.some((result) => result && result.id === savedResultId)
+    );
+    currentMatchSavedResultId = currentMatchSaved ? savedResultId : "";
+  } catch (error) {
+    console.warn("Could not read live match state:", error.message);
+  }
 }
 
 function resetCurrentMatchSave() {
@@ -453,6 +511,7 @@ function sendUpdate() {
   };
 
   io.emit("update", data);
+  saveLiveMatchState();
   writeObsFiles();
 }
 
@@ -626,6 +685,16 @@ io.on("connection", (socket) => {
     sendUpdate();
   });
 
+  socket.on("force-sync", (callback) => {
+    sendUpdate();
+
+    if (typeof callback === "function") {
+      callback({
+        synced: true,
+      });
+    }
+  });
+
   socket.on("team-name-add", (data) => {
     const teamName = addTeamNameToList(data && data.name);
     if (teamName) {
@@ -670,8 +739,10 @@ io.on("connection", (socket) => {
 
 loadTeamNameData();
 loadMatchResults();
+loadLiveMatchState();
 saveTeamNameData();
 saveMatchResults();
+saveLiveMatchState();
 writeObsFiles();
 
 server.listen(PORT, "0.0.0.0", () => {

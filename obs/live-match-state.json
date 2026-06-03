@@ -1,0 +1,14 @@
+{
+  "scoreA": 100,
+  "scoreB": 0,
+  "shotA": "00.05",
+  "shotB": "",
+  "teamNameA": "R-CAT ROBOT",
+  "teamNameB": "ข้าวหอมมะลิ 101",
+  "timeElapsed": 93,
+  "matchDuration": 180,
+  "status": "RUNNING",
+  "currentMatchSaved": false,
+  "currentMatchSavedResultId": "",
+  "savedAt": "2026-06-03T10:03:46.514Z"
+}

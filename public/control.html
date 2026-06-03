@@ -531,6 +531,7 @@
         <h2>รีเซ็ต</h2>
         <div class="button-row">
           <button class="gray" id="resetScoreButton" onclick="resetScore()">RESET SCORE / SHOT</button>
+          <button class="blue" id="forceSyncButton" onclick="forceSyncScreens()">SYNC SCREENS</button>
           <button class="red" onclick="resetAll()">รีเซ็ตทั้งหมด</button>
         </div>
       </section>
@@ -634,6 +635,32 @@
 
     function resetAll() {
       socket.emit("reset-all");
+    }
+
+    function forceSyncScreens() {
+      const syncButton = document.getElementById("forceSyncButton");
+      let syncDone = false;
+
+      function finishSync(label) {
+        syncDone = true;
+        syncButton.disabled = false;
+        syncButton.innerText = label;
+        window.setTimeout(() => {
+          syncButton.innerText = "SYNC SCREENS";
+        }, 1200);
+      }
+
+      syncButton.disabled = true;
+      syncButton.innerText = "SYNCING...";
+      socket.emit("force-sync", (response) => {
+        if (syncDone) return;
+        finishSync(response && response.synced ? "SYNCED" : "SYNC SCREENS");
+      });
+
+      window.setTimeout(() => {
+        if (syncDone) return;
+        finishSync("NO SERVER");
+      }, 1200);
     }
 
     function formatClock(seconds) {
