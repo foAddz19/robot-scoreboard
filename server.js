@@ -10,6 +10,16 @@ const io = new Server(server);
 
 const PORT = Number(process.env.PORT) || 3000;
 
+app.use((req, res, next) => {
+  if (/\.(?:html|css|js)$/i.test(req.path)) {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+  }
+
+  next();
+});
+
 app.use(express.static("public"));
 
 let scoreA = 0;

@@ -193,14 +193,14 @@ button {
   color: #fff8d6;
 }
 
-body:has(.panel) {
+body.scoreboard-page {
   height: 100dvh;
   min-height: 100dvh;
   overflow: hidden;
   padding: clamp(8px, 2vh, 18px);
 }
 
-body:has(.panel) .panel {
+body.scoreboard-page .panel {
   width: min(100%, 1160px);
   height: calc(100dvh - clamp(8px, 2vh, 18px) * 2);
   max-height: 920px;
@@ -212,24 +212,24 @@ body:has(.panel) .panel {
   padding: clamp(12px, 2.4vh, 24px);
 }
 
-body:has(.panel) .brand-strip {
+body.scoreboard-page .brand-strip {
   grid-column: 1 / -1;
   margin-bottom: 0;
   padding: clamp(8px, 1.6vh, 12px);
   grid-template-columns: minmax(230px, 1fr) minmax(260px, auto) minmax(230px, 1fr);
 }
 
-body:has(.panel) .brand-logo {
+body.scoreboard-page .brand-logo {
   width: min(100%, clamp(100px, 34vh, 150px));
   max-height: clamp(40px, 17vh, 116px);
 }
 
-body:has(.panel) .brand-seal {
+body.scoreboard-page .brand-seal {
   width: clamp(76px, 30vh, var(--brand-seal-size));
   max-height: clamp(76px, 15vh, var(--brand-seal-size));
 }
 
-body:has(.panel) .top-row {
+body.scoreboard-page .top-row {
   grid-column: 1 / -1;
   grid-row: 2;
   display: grid;
@@ -246,16 +246,16 @@ body:has(.panel) .top-row {
   z-index: 2;
 }
 
-body:has(.panel) h1 {
+body.scoreboard-page h1 {
   font-size: clamp(32px, 6vh, 44px);
 }
 
-body:has(.panel) .status {
+body.scoreboard-page .status {
   font-size: clamp(18px, 3vh, 22px);
   padding: clamp(8px, 1.4vh, 10px) 16px;
 }
 
-body:has(.panel) .score {
+body.scoreboard-page .score {
   grid-column: 1;
   grid-row: 2 / -1;
   align-self: stretch;
@@ -265,7 +265,7 @@ body:has(.panel) .score {
   font-size: clamp(128px, 28vh, 260px);
 }
 
-body:has(.panel) .time {
+body.scoreboard-page .time {
   grid-column: 2;
   grid-row: 2;
   display: grid;
@@ -278,7 +278,7 @@ body:has(.panel) .time {
   overflow: hidden;
 }
 
-body:has(.panel) .shot-readout {
+body.scoreboard-page .shot-readout {
   grid-column: 2;
   grid-row: 3;
   display: grid;
@@ -291,26 +291,26 @@ body:has(.panel) .shot-readout {
   overflow: hidden;
 }
 
-body:has(.panel) .timer-grid {
+body.scoreboard-page .timer-grid {
   grid-column: 2;
   grid-row: 4;
   gap: clamp(8px, 1.4vh, 12px);
   margin-bottom: 0;
 }
 
-body:has(.panel) .button-grid {
+body.scoreboard-page .button-grid {
   grid-column: 2;
   grid-row: 5;
   gap: clamp(8px, 1.4vh, 12px);
   margin-top: 0;
 }
 
-body:has(.panel) button {
+body.scoreboard-page button {
   min-height: clamp(46px, 7.2vh, 70px);
   font-size: clamp(20px, 3.8vh, 32px);
 }
 
-body:has(.panel) .reset {
+body.scoreboard-page .reset {
   grid-column: 2;
   grid-row: 6;
   min-height: clamp(46px, 7.2vh, 66px);
@@ -319,240 +319,240 @@ body:has(.panel) .reset {
 }
 
 @media (max-width: 860px) {
-  body:has(.panel) .panel {
+  body.scoreboard-page .panel {
     width: min(100%, 760px);
     display: flex;
     flex-direction: column;
   }
 
-  body:has(.panel) .score {
+  body.scoreboard-page .score {
     flex: 1 1 130px;
     font-size: clamp(88px, 22vh, 150px);
   }
 }
 
 @media (max-height: 620px) {
-  body:has(.panel) {
+  body.scoreboard-page {
     padding: 8px;
   }
 
-  body:has(.panel) .panel {
+  body.scoreboard-page .panel {
     height: calc(100dvh - 16px);
     row-gap: 6px;
     padding: 10px;
   }
 
-  body:has(.panel) .brand-strip {
+  body.scoreboard-page .brand-strip {
     grid-template-columns: minmax(160px, 1fr) minmax(150px, auto) minmax(160px, 1fr);
     padding: 6px 10px;
     gap: 10px;
   }
 
-  body:has(.panel) .brand-logo {
+  body.scoreboard-page .brand-logo {
     max-height: 64px;
   }
 
-  body:has(.panel) .brand-seal {
+  body.scoreboard-page .brand-seal {
     width: 64px;
     max-height: 64px;
   }
 
-  body:has(.panel) h1 {
+  body.scoreboard-page h1 {
     font-size: clamp(26px, 5vh, 34px);
   }
 
-  body:has(.panel) .status {
+  body.scoreboard-page .status {
     font-size: clamp(14px, 2.6vh, 18px);
     padding: 6px 12px;
   }
 
-  body:has(.panel) .score {
+  body.scoreboard-page .score {
     font-size: clamp(92px, 25vh, 170px);
   }
 
-  body:has(.panel) .time {
+  body.scoreboard-page .time {
     min-height: 68px;
     padding: 6px 10px;
     font-size: clamp(42px, 8vh, 58px);
   }
 
-  body:has(.panel) .shot-readout {
+  body.scoreboard-page .shot-readout {
     min-height: 48px;
     padding: 6px 10px;
     font-size: clamp(22px, 4.2vh, 30px);
   }
 
-  body:has(.panel) .timer-grid,
-  body:has(.panel) .button-grid {
+  body.scoreboard-page .timer-grid,
+  body.scoreboard-page .button-grid {
     gap: 6px;
   }
 
-  body:has(.panel) button {
+  body.scoreboard-page button {
     min-height: 36px;
     font-size: 18px;
   }
 
-  body:has(.panel) .reset {
+  body.scoreboard-page .reset {
     min-height: 36px;
     font-size: 16px;
   }
 
-  body:has(.panel) .event-title strong {
+  body.scoreboard-page .event-title strong {
     font-size: clamp(18px, 5vh, 26px);
   }
 
-  body:has(.panel) .event-title span {
+  body.scoreboard-page .event-title span {
     font-size: clamp(11px, 2.7vh, 14px);
     margin-top: 3px;
   }
 }
 
 @media (max-height: 500px) {
-  body:has(.panel) {
+  body.scoreboard-page {
     padding: 6px;
   }
 
-  body:has(.panel) .panel {
+  body.scoreboard-page .panel {
     height: calc(100dvh - 12px);
     row-gap: 4px;
     padding: 8px;
   }
 
-  body:has(.panel) .brand-strip {
+  body.scoreboard-page .brand-strip {
     grid-template-columns: minmax(126px, 1fr) minmax(104px, auto) minmax(126px, 1fr);
     padding: 4px 8px;
   }
 
-  body:has(.panel) .brand-logo {
+  body.scoreboard-page .brand-logo {
     max-height: 44px;
   }
 
-  body:has(.panel) .brand-seal {
+  body.scoreboard-page .brand-seal {
     width: 44px;
     max-height: 44px;
   }
 
-  body:has(.panel) .top-row {
+  body.scoreboard-page .top-row {
     padding: 0 0 4px;
   }
 
-  body:has(.panel) h1 {
+  body.scoreboard-page h1 {
     font-size: clamp(22px, 5vh, 28px);
   }
 
-  body:has(.panel) .status {
+  body.scoreboard-page .status {
     min-width: 78px;
     font-size: clamp(12px, 2.8vh, 15px);
     padding: 5px 9px;
   }
 
-  body:has(.panel) .score {
+  body.scoreboard-page .score {
     font-size: clamp(74px, 24vh, 118px);
   }
 
-  body:has(.panel) .time {
+  body.scoreboard-page .time {
     min-height: 50px;
     padding: 4px 8px;
     font-size: clamp(34px, 8vh, 44px);
   }
 
-  body:has(.panel) .shot-readout {
+  body.scoreboard-page .shot-readout {
     min-height: 36px;
     padding: 4px 8px;
     font-size: clamp(18px, 4.6vh, 24px);
   }
 
-  body:has(.panel) .button-grid,
-  body:has(.panel) .timer-grid {
+  body.scoreboard-page .button-grid,
+  body.scoreboard-page .timer-grid {
     gap: 4px;
   }
 
-  body:has(.panel) button {
+  body.scoreboard-page button {
     min-height: 28px;
     font-size: 15px;
   }
 
-  body:has(.panel) .reset {
+  body.scoreboard-page .reset {
     min-height: 28px;
     font-size: 14px;
   }
 }
 
 @media (max-height: 420px) {
-  body:has(.panel) {
+  body.scoreboard-page {
     padding: 4px;
   }
 
-  body:has(.panel) .panel {
+  body.scoreboard-page .panel {
     height: calc(100dvh - 8px);
     row-gap: 3px;
     padding: 6px;
   }
 
-  body:has(.panel) .brand-strip {
+  body.scoreboard-page .brand-strip {
     padding: 3px 6px;
     gap: 6px;
   }
 
-  body:has(.panel) .brand-logo {
+  body.scoreboard-page .brand-logo {
     max-height: 34px;
   }
 
-  body:has(.panel) .brand-seal {
+  body.scoreboard-page .brand-seal {
     width: 34px;
     max-height: 34px;
   }
 
-  body:has(.panel) .event-title strong {
+  body.scoreboard-page .event-title strong {
     font-size: 18px;
   }
 
-  body:has(.panel) .event-title span {
+  body.scoreboard-page .event-title span {
     font-size: 10px;
     margin-top: 2px;
   }
 
-  body:has(.panel) .top-row {
+  body.scoreboard-page .top-row {
     padding: 0 0 3px;
   }
 
-  body:has(.panel) h1 {
+  body.scoreboard-page h1 {
     font-size: 20px;
   }
 
-  body:has(.panel) .status {
+  body.scoreboard-page .status {
     min-width: 68px;
     padding: 4px 8px;
     font-size: 12px;
   }
 
-  body:has(.panel) .score {
+  body.scoreboard-page .score {
     font-size: clamp(60px, 22vh, 96px);
   }
 
-  body:has(.panel) .time {
+  body.scoreboard-page .time {
     min-height: 42px;
     padding: 3px 8px;
     font-size: clamp(28px, 8vh, 38px);
   }
 
-  body:has(.panel) .shot-readout {
+  body.scoreboard-page .shot-readout {
     min-height: 30px;
     padding: 3px 8px;
     font-size: clamp(16px, 4.5vh, 20px);
   }
 
-  body:has(.panel) .button-grid,
-  body:has(.panel) .timer-grid {
+  body.scoreboard-page .button-grid,
+  body.scoreboard-page .timer-grid {
     gap: 3px;
   }
 
-  body:has(.panel) button {
+  body.scoreboard-page button {
     min-height: 24px;
     font-size: 13px;
   }
 
-  body:has(.panel) .reset {
+  body.scoreboard-page .reset {
     min-height: 24px;
     font-size: 12px;
   }

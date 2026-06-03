@@ -264,7 +264,7 @@
   </style>
   <link rel="stylesheet" href="/brand.css">
   <style>
-    body.team-a-page:has(.panel) .top-row {
+    body.team-a-page.scoreboard-page .top-row {
       grid-column: 1;
       grid-row: 2;
       grid-template-columns: minmax(0, 1fr) auto;
@@ -273,13 +273,13 @@
       transform: translateY(clamp(10px, 1.8vh, 18px));
     }
 
-    body.team-a-page:has(.panel) .status {
+    body.team-a-page.scoreboard-page .status {
       justify-self: end;
       min-width: clamp(96px, 12vw, 128px);
       text-align: center;
     }
 
-    body.team-a-page:has(.panel) .team-tag {
+    body.team-a-page.scoreboard-page .team-tag {
       justify-self: start;
       max-width: 100%;
       overflow-wrap: anywhere;
@@ -288,7 +288,7 @@
     }
 
     @media (max-width: 560px) {
-      body.team-a-page:has(.panel) .top-row {
+      body.team-a-page.scoreboard-page .top-row {
         grid-template-columns: 1fr;
         row-gap: 8px;
         height: auto;
@@ -296,14 +296,14 @@
         transform: none;
       }
 
-      body.team-a-page:has(.panel) .status,
-      body.team-a-page:has(.panel) .team-tag {
+      body.team-a-page.scoreboard-page .status,
+      body.team-a-page.scoreboard-page .team-tag {
         justify-self: center;
       }
     }
   </style>
 </head>
-<body class="team-a-page">
+<body class="team-a-page scoreboard-page">
 
   <main class="panel">
     <div class="brand-strip">
