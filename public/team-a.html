@@ -89,6 +89,7 @@
     }
 
     .score {
+      position: relative;
       min-height: 180px;
       display: grid;
       place-items: center;
@@ -101,6 +102,61 @@
       font-weight: 900;
       line-height: 1;
       text-shadow: 0 0 24px rgba(0, 255, 153, 0.22);
+      overflow: hidden;
+    }
+
+    .score-value {
+      transform: translateY(-8%);
+    }
+
+    .mission-shot-grid {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      min-height: 118px;
+      border-top: 3px solid rgba(255, 255, 255, 0.16);
+      background: rgba(12, 16, 22, 0.72);
+      backdrop-filter: blur(2px);
+    }
+
+    .mission-shot {
+      display: grid;
+      grid-template-rows: minmax(34px, 0.7fr) minmax(48px, 1fr);
+      min-width: 0;
+      border-right: 3px solid rgba(255, 255, 255, 0.12);
+      color: #fff8d6;
+      font-variant-numeric: tabular-nums;
+      text-shadow: none;
+    }
+
+    .mission-shot:last-child {
+      border-right: 0;
+    }
+
+    .mission-label,
+    .mission-time {
+      display: grid;
+      place-items: center;
+      padding: 5px;
+      overflow: hidden;
+      line-height: 1;
+    }
+
+    .mission-label {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      color: #9fd6ff;
+      font-size: clamp(15px, 2.1vh, 20px);
+      font-weight: 900;
+    }
+
+    .mission-time {
+      color: var(--gold);
+      font-size: clamp(22px, 4vh, 34px);
+      font-weight: 900;
+    }
     }
 
     .time {
@@ -145,13 +201,24 @@
       font-variant-numeric: tabular-nums;
     }
 
-    .shot-readout span {
+    .shot-label {
+      color: #fff8d6;
+    }
+
+    .shot-time {
       color: var(--gold);
     }
 
     .button-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .mission-button-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
       margin-top: 12px;
     }
@@ -209,6 +276,24 @@
       background: #ff8a00;
     }
 
+    .mission-button {
+      display: grid;
+      gap: 4px;
+      place-items: center;
+      background: #12a878;
+      font-size: 24px;
+    }
+
+    .mission-button.end {
+      grid-column: auto;
+      background: #ff8a00;
+    }
+
+    .mission-button span {
+      font-size: 18px;
+      line-height: 1;
+    }
+
     .reset {
       min-height: 70px;
       margin-top: 16px;
@@ -243,6 +328,18 @@
         font-size: 112px;
       }
 
+      .mission-shot-grid {
+        min-height: 96px;
+      }
+
+      .mission-label {
+        font-size: 13px;
+      }
+
+      .mission-time {
+        font-size: 20px;
+      }
+
       .time {
         font-size: 54px;
       }
@@ -254,6 +351,18 @@
       button {
         min-height: 68px;
         font-size: 28px;
+      }
+
+      .mission-button {
+        font-size: 22px;
+      }
+
+      .mission-button span {
+        font-size: 15px;
+      }
+
+      .mission-button-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .reset {
@@ -320,23 +429,50 @@
       <div class="status" id="status" data-state="STOP">STOP</div>
     </div>
 
-    <div class="score" id="scoreA">0</div>
+    <div class="score">
+      <span class="score-value" id="scoreA">0</span>
+      <div class="mission-shot-grid" aria-label="Mission shot times">
+        <div class="mission-shot">
+          <span class="mission-label">ภารกิจ 1</span>
+          <span class="mission-time" id="missionShotA1">--.--</span>
+        </div>
+        <div class="mission-shot">
+          <span class="mission-label">ภารกิจ 2</span>
+          <span class="mission-time" id="missionShotA2">--.--</span>
+        </div>
+        <div class="mission-shot">
+          <span class="mission-label">ภารกิจ 3</span>
+          <span class="mission-time" id="missionShotA3">--.--</span>
+        </div>
+        <div class="mission-shot">
+          <span class="mission-label">ภารกิจ 4</span>
+          <span class="mission-time" id="missionShotA4">--.--</span>
+        </div>
+      </div>
+    </div>
     <div class="time" id="time">00.00</div>
-    <div class="shot-readout">SHOT <span id="shotA">--.--</span></div>
+    <div class="shot-readout">
+      <span class="shot-label">SHOT</span>
+      <span class="shot-time" id="shotA">--.--</span>
+    </div>
 
     <div class="timer-grid">
       <button class="start" id="startTimeButton">START</button>
       <button class="stop" id="stopTimeButton">STOP</button>
     </div>
 
+    <div class="mission-button-grid">
+      <button class="mission-button" data-mission="1" data-point="10"><span>ภารกิจ 1</span>+10</button>
+      <button class="mission-button" data-mission="2" data-point="20"><span>ภารกิจ 2</span>+20</button>
+      <button class="mission-button" data-mission="3" data-point="20"><span>ภารกิจ 3</span>+20</button>
+      <button class="mission-button end" id="endMatchButton"><span>ภารกิจ 4</span>+20 END</button>
+    </div>
+
     <div class="button-grid">
-      <button class="plus" data-score="5">+5</button>
       <button class="plus" data-score="10">+10</button>
       <button class="plus" data-score="20">+20</button>
-      <button class="minus" data-score="-5">-5</button>
       <button class="minus" data-score="-10">-10</button>
       <button class="minus" data-score="-20">-20</button>
-      <button class="end" id="endMatchButton">+20 END</button>
     </div>
 
     <button class="reset" id="resetScoreButton">RESET SCORE / SHOT</button>
@@ -360,8 +496,30 @@
       });
     }
 
+    function setTimerButtonsEnabled(enabled) {
+      document.getElementById("startTimeButton").disabled = !enabled;
+      document.getElementById("stopTimeButton").disabled = !enabled;
+    }
+
     function setEndButtonEnabled(enabled) {
       document.getElementById("endMatchButton").disabled = !enabled;
+    }
+
+    function setMissionButtonsEnabled(data) {
+      const missionShots = Array.isArray(data.missionShotsA) ? data.missionShotsA : [];
+
+      document.querySelectorAll("[data-mission]").forEach((button) => {
+        const missionIndex = Number(button.dataset.mission) - 1;
+        button.disabled = data.status === "FINISH" || missionShots[missionIndex] !== "";
+      });
+    }
+
+    function renderMissionShots(data) {
+      const missionShots = Array.isArray(data.missionShotsA) ? data.missionShotsA : [];
+
+      [1, 2, 3, 4].forEach((mission) => {
+        document.getElementById(`missionShotA${mission}`).innerText = missionShots[mission - 1] || "--.--";
+      });
     }
 
     function showOffline() {
@@ -410,6 +568,16 @@
         });
       });
 
+      document.querySelectorAll("[data-mission]").forEach((button) => {
+        button.addEventListener("click", () => {
+          socket.emit("mission-score", {
+            team: "A",
+            mission: Number(button.dataset.mission),
+            point: Number(button.dataset.point)
+          });
+        });
+      });
+
       socket.on("connect", () => {
         setButtonsEnabled(true);
       });
@@ -422,11 +590,16 @@
         document.getElementById("teamNameA").innerText = data.teamNameA || "TEAM A";
         document.getElementById("time").innerText = data.time;
         document.getElementById("shotA").innerText = data.shotA || "--.--";
+        renderMissionShots(data);
         status.innerText = data.status;
         status.dataset.state = data.status;
         document.getElementById("resetScoreButton").disabled = data.status === "RUNNING";
+        setTimerButtonsEnabled(data.status !== "FINISH");
         setPointButtonsEnabled(data.status !== "FINISH");
-        setEndButtonEnabled(data.status !== "FINISH" && data.shotA === "");
+        setMissionButtonsEnabled(data);
+        const recordedMissionShots = Array.isArray(data.recordedMissionShotsA) ? data.recordedMissionShotsA : data.missionShotsA;
+        const missionFourRecorded = Array.isArray(recordedMissionShots) && recordedMissionShots[3] !== "";
+        setEndButtonEnabled(!missionFourRecorded && (data.status === "FINISH" || data.shotA === ""));
         if (typeof applyFinalWarning === "function") applyFinalWarning(data);
       });
     }

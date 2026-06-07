@@ -1,14 +1,38 @@
 {
-  "scoreA": 100,
+  "scoreA": 0,
   "scoreB": 0,
-  "shotA": "00.05",
+  "shotA": "",
   "shotB": "",
+  "missionShotsA": [
+    "",
+    "",
+    "",
+    ""
+  ],
+  "missionShotsB": [
+    "",
+    "",
+    "",
+    ""
+  ],
+  "recordedMissionShotsA": [
+    "",
+    "",
+    "",
+    ""
+  ],
+  "recordedMissionShotsB": [
+    "",
+    "",
+    "",
+    ""
+  ],
   "teamNameA": "R-CAT ROBOT",
   "teamNameB": "ข้าวหอมมะลิ 101",
-  "timeElapsed": 93,
+  "timeElapsed": 0,
   "matchDuration": 180,
-  "status": "RUNNING",
+  "status": "STOP",
   "currentMatchSaved": false,
   "currentMatchSavedResultId": "",
-  "savedAt": "2026-06-03T10:03:46.514Z"
+  "savedAt": "2026-06-07T17:36:40.910Z"
 }

@@ -201,14 +201,16 @@ body.scoreboard-page {
 }
 
 body.scoreboard-page .panel {
-  width: min(100%, 1160px);
+  --scoreboard-control-gap: clamp(10px, 1.4vh, 14px);
+  --scoreboard-radius: 8px;
+  width: min(100%, 1220px);
   height: calc(100dvh - clamp(8px, 2vh, 18px) * 2);
   max-height: 920px;
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
-  grid-template-rows: auto auto auto auto auto auto auto minmax(0, 1fr);
-  column-gap: clamp(18px, 2.8vw, 34px);
-  row-gap: clamp(8px, 1.5vh, 14px);
+  grid-template-columns: minmax(0, 1.18fr) repeat(3, minmax(86px, 0.22fr)) minmax(112px, 0.22fr);
+  grid-template-rows: auto minmax(92px, 13vh) minmax(78px, 10vh) minmax(62px, 0.68fr) minmax(138px, 1.6fr) minmax(58px, 0.68fr);
+  column-gap: var(--scoreboard-control-gap);
+  row-gap: var(--scoreboard-control-gap);
   padding: clamp(12px, 2.4vh, 24px);
 }
 
@@ -261,58 +263,137 @@ body.scoreboard-page .score {
   align-self: stretch;
   min-height: 0;
   margin: 0;
+  border-radius: var(--scoreboard-radius);
   border-width: 3px;
   font-size: clamp(128px, 28vh, 260px);
 }
 
+body.scoreboard-page .score-value {
+  display: block;
+  padding-bottom: clamp(82px, 15vh, 132px);
+}
+
+body.scoreboard-page .mission-shot-grid {
+  min-height: clamp(92px, 16vh, 132px);
+  border-radius: 0 0 var(--scoreboard-radius) var(--scoreboard-radius);
+}
+
 body.scoreboard-page .time {
-  grid-column: 2;
+  grid-column: 2 / 6;
   grid-row: 2;
   display: grid;
   place-items: center;
   margin: 0;
-  align-self: start;
-  min-height: clamp(92px, 13vh, 118px);
+  align-self: stretch;
+  min-height: 0;
   padding: clamp(10px, 1.8vh, 14px);
+  border-radius: var(--scoreboard-radius);
+  border-color: rgba(255, 204, 0, 0.34);
+  background: #171717;
+  color: var(--gold, var(--brand-gold));
   font-size: clamp(54px, 9vh, 82px);
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 0 22px rgba(255, 204, 0, 0.16);
+  transform: none;
   overflow: hidden;
+}
+
+body.scoreboard-page .time.final-warning {
+  color: #ff3434;
+  border-color: rgba(255, 52, 52, 0.7);
+  text-shadow: 0 0 24px rgba(255, 52, 52, 0.55);
 }
 
 body.scoreboard-page .shot-readout {
-  grid-column: 2;
+  grid-column: 2 / 6;
   grid-row: 3;
   display: grid;
-  place-items: center;
+  grid-template-rows: auto auto;
+  align-content: center;
+  justify-items: center;
+  row-gap: clamp(2px, 0.5vh, 5px);
   margin: 0;
-  align-self: start;
-  min-height: clamp(66px, 9vh, 84px);
-  padding: clamp(10px, 1.4vh, 14px) 12px;
+  align-self: stretch;
+  min-height: 0;
+  padding: clamp(8px, 1.2vh, 12px) 12px;
+  border-radius: var(--scoreboard-radius);
   font-size: clamp(28px, 4vh, 36px);
+  line-height: 0.9;
   overflow: hidden;
 }
 
+body.scoreboard-page .shot-label,
+body.scoreboard-page .shot-time {
+  display: block;
+  line-height: 0.9;
+}
+
+body.scoreboard-page .shot-time {
+  font-size: clamp(26px, 3.8vh, 34px);
+}
+
 body.scoreboard-page .timer-grid {
-  grid-column: 2;
+  grid-column: 2 / 5;
   grid-row: 4;
-  gap: clamp(8px, 1.4vh, 12px);
+  align-self: stretch;
+  align-items: stretch;
+  grid-auto-rows: minmax(0, 1fr);
+  gap: var(--scoreboard-control-gap);
+  height: 100%;
   margin-bottom: 0;
 }
 
+body.scoreboard-page .mission-button-grid {
+  grid-column: 5;
+  grid-row: 4 / -1;
+  align-self: stretch;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(4, minmax(0, 1fr));
+  gap: var(--scoreboard-control-gap);
+  height: 100%;
+  margin-top: 0;
+}
+
 body.scoreboard-page .button-grid {
-  grid-column: 2;
+  grid-column: 2 / 5;
   grid-row: 5;
-  gap: clamp(8px, 1.4vh, 12px);
+  align-self: stretch;
+  align-items: stretch;
+  grid-auto-rows: minmax(0, 1fr);
+  gap: var(--scoreboard-control-gap);
+  height: 100%;
   margin-top: 0;
 }
 
 body.scoreboard-page button {
+  height: 100%;
   min-height: clamp(46px, 7.2vh, 70px);
+  border-radius: var(--scoreboard-radius) !important;
   font-size: clamp(20px, 3.8vh, 32px);
 }
 
+body.scoreboard-page .mission-button {
+  min-height: 0;
+  padding: clamp(6px, 1vh, 10px);
+  font-size: clamp(18px, 2.8vh, 25px);
+}
+
+body.scoreboard-page .mission-button span {
+  font-size: clamp(10px, 1.9vh, 14px);
+  white-space: nowrap;
+}
+
+body.scoreboard-page .mission-button.end {
+  font-size: clamp(15px, 2.35vh, 21px);
+}
+
 body.scoreboard-page .reset {
-  grid-column: 2;
+  grid-column: 2 / 5;
   grid-row: 6;
+  align-self: stretch;
+  height: 100%;
   min-height: clamp(46px, 7.2vh, 66px);
   margin-top: 0;
   font-size: clamp(18px, 3.2vh, 24px);
@@ -328,6 +409,11 @@ body.scoreboard-page .reset {
   body.scoreboard-page .score {
     flex: 1 1 130px;
     font-size: clamp(88px, 22vh, 150px);
+  }
+
+  body.scoreboard-page .mission-button-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: none;
   }
 }
 
@@ -370,6 +456,22 @@ body.scoreboard-page .reset {
     font-size: clamp(92px, 25vh, 170px);
   }
 
+  body.scoreboard-page .score-value {
+    padding-bottom: clamp(58px, 15vh, 88px);
+  }
+
+  body.scoreboard-page .mission-shot-grid {
+    min-height: clamp(54px, 15vh, 82px);
+  }
+
+  body.scoreboard-page .mission-label {
+    font-size: clamp(10px, 2.5vh, 14px);
+  }
+
+  body.scoreboard-page .mission-time {
+    font-size: clamp(13px, 3.8vh, 20px);
+  }
+
   body.scoreboard-page .time {
     min-height: 68px;
     padding: 6px 10px;
@@ -383,6 +485,7 @@ body.scoreboard-page .reset {
   }
 
   body.scoreboard-page .timer-grid,
+  body.scoreboard-page .mission-button-grid,
   body.scoreboard-page .button-grid {
     gap: 6px;
   }
@@ -450,6 +553,22 @@ body.scoreboard-page .reset {
     font-size: clamp(74px, 24vh, 118px);
   }
 
+  body.scoreboard-page .score-value {
+    padding-bottom: clamp(46px, 14vh, 66px);
+  }
+
+  body.scoreboard-page .mission-shot-grid {
+    min-height: clamp(42px, 14vh, 62px);
+  }
+
+  body.scoreboard-page .mission-label {
+    font-size: clamp(8px, 2.4vh, 11px);
+  }
+
+  body.scoreboard-page .mission-time {
+    font-size: clamp(11px, 3.7vh, 16px);
+  }
+
   body.scoreboard-page .time {
     min-height: 50px;
     padding: 4px 8px;
@@ -463,6 +582,7 @@ body.scoreboard-page .reset {
   }
 
   body.scoreboard-page .button-grid,
+  body.scoreboard-page .mission-button-grid,
   body.scoreboard-page .timer-grid {
     gap: 4px;
   }
@@ -530,6 +650,22 @@ body.scoreboard-page .reset {
     font-size: clamp(60px, 22vh, 96px);
   }
 
+  body.scoreboard-page .score-value {
+    padding-bottom: clamp(38px, 13vh, 52px);
+  }
+
+  body.scoreboard-page .mission-shot-grid {
+    min-height: clamp(34px, 13vh, 50px);
+  }
+
+  body.scoreboard-page .mission-label {
+    font-size: clamp(7px, 2.4vh, 9px);
+  }
+
+  body.scoreboard-page .mission-time {
+    font-size: clamp(9px, 3.6vh, 13px);
+  }
+
   body.scoreboard-page .time {
     min-height: 42px;
     padding: 3px 8px;
@@ -543,6 +679,7 @@ body.scoreboard-page .reset {
   }
 
   body.scoreboard-page .button-grid,
+  body.scoreboard-page .mission-button-grid,
   body.scoreboard-page .timer-grid {
     gap: 3px;
   }

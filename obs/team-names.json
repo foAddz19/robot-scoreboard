@@ -1,11 +1,13 @@
 {
   "teamNames": [
     "R-CAT ROBOT",
-    "ข้าวหอมมะลิ 101"
+    "ข้าวหอมมะลิ 101",
+    "RETC Roiet"
   ],
   "teamWeights": {
     "R-CAT ROBOT": 12.5,
-    "ข้าวหอมมะลิ 101": 20.6
+    "ข้าวหอมมะลิ 101": 20.6,
+    "RETC Roiet": 23
   },
   "teamNameA": "R-CAT ROBOT",
   "teamNameB": "ข้าวหอมมะลิ 101",

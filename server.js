@@ -26,6 +26,8 @@ let scoreA = 0;
 let scoreB = 0;
 let shotA = "";
 let shotB = "";
+let missionShotsA = ["", "", "", ""];
+let missionShotsB = ["", "", "", ""];
 let teamNames = ["TEAM A", "TEAM B"];
 let teamWeights = {};
 let teamNameA = "TEAM A";
@@ -59,6 +61,24 @@ function normalizeTeamWeight(value) {
 
   const weight = Number(value);
   return Number.isFinite(weight) && weight > 0 ? weight : null;
+}
+
+function normalizeMissionShots(value) {
+  const shots = Array.isArray(value) ? value : [];
+
+  return [0, 1, 2, 3].map((index) => {
+    const shotValue = shots[index];
+
+    if (shotValue === "" || shotValue === null || shotValue === undefined) {
+      return "";
+    }
+
+    return String(shotValue);
+  });
+}
+
+function normalizeRecordedMissionShots(value) {
+  return normalizeMissionShots(value);
 }
 
 function getTeamWeight(name) {
@@ -168,6 +188,10 @@ function saveLiveMatchState() {
     scoreB,
     shotA,
     shotB,
+    missionShotsA,
+    missionShotsB,
+    recordedMissionShotsA: normalizeRecordedMissionShots(missionShotsA),
+    recordedMissionShotsB: normalizeRecordedMissionShots(missionShotsB),
     teamNameA,
     teamNameB,
     timeElapsed,
@@ -199,9 +223,22 @@ function loadLiveMatchState() {
     timeElapsed = Number.isFinite(savedElapsed) ? Math.min(Math.max(Math.floor(savedElapsed), 0), matchDuration) : 0;
     shotA = String(savedData.shotA || "");
     shotB = String(savedData.shotB || "");
+    const hasRecordedMissionShotsA = Array.isArray(savedData.recordedMissionShotsA);
+    const hasRecordedMissionShotsB = Array.isArray(savedData.recordedMissionShotsB);
+    missionShotsA = normalizeRecordedMissionShots(hasRecordedMissionShotsA ? savedData.recordedMissionShotsA : savedData.missionShotsA);
+    missionShotsB = normalizeRecordedMissionShots(hasRecordedMissionShotsB ? savedData.recordedMissionShotsB : savedData.missionShotsB);
     teamNameA = addTeamNameToList(savedData.teamNameA || teamNameA) || teamNameA;
     teamNameB = addTeamNameToList(savedData.teamNameB || teamNameB) || teamNameB;
     status = validStatuses.has(savedStatus) ? savedStatus : "STOP";
+
+    const finishTime = formatTime(matchDuration);
+    if (!hasRecordedMissionShotsA && status === "FINISH" && shotA === finishTime && missionShotsA[3] === finishTime) {
+      missionShotsA[3] = "";
+    }
+
+    if (!hasRecordedMissionShotsB && status === "FINISH" && shotB === finishTime && missionShotsB[3] === finishTime) {
+      missionShotsB[3] = "";
+    }
 
     if (status === "RUNNING") {
       status = "STOP";
@@ -338,6 +375,28 @@ function normalizeMatchResult(result) {
   };
 }
 
+function getCurrentMatchResultFields() {
+  const winnerInfo = getWinnerInfo();
+
+  return {
+    teamNameA,
+    teamNameB,
+    teamWeightA: getTeamWeight(teamNameA),
+    teamWeightB: getTeamWeight(teamNameB),
+    scoreA,
+    scoreB,
+    shotA,
+    shotB,
+    missionShotsA: normalizeMissionShots(missionShotsA),
+    missionShotsB: normalizeMissionShots(missionShotsB),
+    elapsedSeconds: timeElapsed,
+    elapsedTime: formatTime(timeElapsed),
+    matchDuration,
+    winner: winnerInfo.winner,
+    winnerName: winnerInfo.winnerName,
+  };
+}
+
 function saveCurrentMatchResult(mode) {
   if (currentMatchSaved) {
     return {
@@ -347,25 +406,12 @@ function saveCurrentMatchResult(mode) {
   }
 
   const saveMode = mode === "auto" ? "auto" : "manual";
-  const winnerInfo = getWinnerInfo();
   const result = {
     id: `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
     matchNumber: getNextMatchNumber(),
     savedAt: new Date().toISOString(),
     mode: saveMode,
-    teamNameA,
-    teamNameB,
-    teamWeightA: getTeamWeight(teamNameA),
-    teamWeightB: getTeamWeight(teamNameB),
-    scoreA,
-    scoreB,
-    shotA,
-    shotB,
-    elapsedSeconds: timeElapsed,
-    elapsedTime: formatTime(timeElapsed),
-    matchDuration,
-    winner: winnerInfo.winner,
-    winnerName: winnerInfo.winnerName,
+    ...getCurrentMatchResultFields(),
   };
 
   matchResults = [result, ...matchResults].slice(0, 200);
@@ -377,6 +423,20 @@ function saveCurrentMatchResult(mode) {
     saved: true,
     result,
   };
+}
+
+function updateCurrentMatchResult() {
+  if (!currentMatchSaved || !currentMatchSavedResultId) return false;
+
+  const resultIndex = matchResults.findIndex((result) => result && result.id === currentMatchSavedResultId);
+  if (resultIndex === -1) return false;
+
+  matchResults[resultIndex] = {
+    ...matchResults[resultIndex],
+    ...getCurrentMatchResultFields(),
+  };
+  saveMatchResults();
+  return true;
 }
 
 function deleteMatchResult(id) {
@@ -481,6 +541,12 @@ function writeObsFiles() {
   fs.writeFileSync(path.join(obsDir, "time.txt"), formatTime(timeElapsed));
   fs.writeFileSync(path.join(obsDir, "shot_a.txt"), shotA);
   fs.writeFileSync(path.join(obsDir, "shot_b.txt"), shotB);
+  normalizeMissionShots(missionShotsA).forEach((shot, index) => {
+    fs.writeFileSync(path.join(obsDir, `mission_shot_a_${index + 1}.txt`), shot);
+  });
+  normalizeMissionShots(missionShotsB).forEach((shot, index) => {
+    fs.writeFileSync(path.join(obsDir, `mission_shot_b_${index + 1}.txt`), shot);
+  });
   fs.writeFileSync(path.join(obsDir, "status.txt"), status);
   fs.writeFileSync(path.join(obsDir, "team-name-a.text"), teamNamesVisible ? teamNameA : "");
   fs.writeFileSync(path.join(obsDir, "team-name-b.text"), teamNamesVisible ? teamNameB : "");
@@ -493,6 +559,10 @@ function sendUpdate() {
     scoreB,
     shotA,
     shotB,
+    missionShotsA: normalizeMissionShots(missionShotsA),
+    missionShotsB: normalizeMissionShots(missionShotsB),
+    recordedMissionShotsA: normalizeRecordedMissionShots(missionShotsA),
+    recordedMissionShotsB: normalizeRecordedMissionShots(missionShotsB),
     teamNames,
     teamWeights,
     teamNameA,
@@ -587,14 +657,16 @@ function resetTimer(seconds = 180) {
   timeElapsed = 0;
   shotA = "";
   shotB = "";
+  missionShotsA = ["", "", "", ""];
+  missionShotsB = ["", "", "", ""];
   status = "STOP";
   resetCurrentMatchSave();
   sendUpdate();
 }
 
-function addScore(team, point) {
+function addScore(team, point, options = {}) {
   if (!Number.isFinite(point)) return;
-  if (status === "FINISH") return;
+  if (status === "FINISH" && !options.allowAfterFinish) return;
 
   if (team === "A") {
     scoreA += point;
@@ -611,6 +683,19 @@ function hasRecordedShot(team) {
   return (team === "A" && shotA !== "") || (team === "B" && shotB !== "");
 }
 
+function getMissionShotList(team) {
+  if (team === "A") return missionShotsA;
+  if (team === "B") return missionShotsB;
+  return null;
+}
+
+function hasRecordedMissionShot(team, mission) {
+  const shots = getMissionShotList(team);
+  const missionIndex = Number(mission) - 1;
+
+  return Boolean(shots && missionIndex >= 0 && missionIndex < 4 && shots[missionIndex] !== "");
+}
+
 function recordShot(team) {
   if (status === "FINISH") return;
 
@@ -625,6 +710,25 @@ function recordShot(team) {
   sendUpdate();
 }
 
+function recordMissionShot(team, mission, options = {}) {
+  const shots = getMissionShotList(team);
+  const missionIndex = Number(mission) - 1;
+  const canRecordAfterFinish = options.allowAfterFinish && missionIndex === 3;
+
+  if (status === "FINISH" && !canRecordAfterFinish) return false;
+  if (!shots || missionIndex < 0 || missionIndex >= 4 || shots[missionIndex] !== "") return false;
+
+  const shotTime = formatTime(timeElapsed);
+  shots[missionIndex] = shotTime;
+
+  if (missionIndex === 3) {
+    if (team === "A" && shotA === "") shotA = shotTime;
+    if (team === "B" && shotB === "") shotB = shotTime;
+  }
+
+  return true;
+}
+
 io.on("connection", (socket) => {
   sendUpdate();
 
@@ -636,18 +740,48 @@ io.on("connection", (socket) => {
     sendUpdate();
   });
 
+  socket.on("mission-score", (data) => {
+    const team = data && data.team;
+    const point = Number(data && data.point);
+    const mission = Number(data && data.mission);
+
+    if (!Number.isFinite(point) || !Number.isFinite(mission) || mission < 1 || mission > 4) {
+      sendUpdate();
+      return;
+    }
+
+    if (status === "FINISH" || hasRecordedMissionShot(team, mission)) {
+      sendUpdate();
+      return;
+    }
+
+    addScore(team, point);
+    recordMissionShot(team, mission);
+    sendUpdate();
+  });
+
   socket.on("end-with-bonus", (data) => {
     const team = data.team;
     const point = Number(data.point);
     const safePoint = Number.isFinite(point) ? point : 20;
 
-    if (status === "FINISH" || hasRecordedShot(team)) {
+    if (hasRecordedMissionShot(team, 4)) {
       sendUpdate();
       return;
     }
 
-    addScore(team, safePoint);
-    recordShot(team);
+    if (!recordMissionShot(team, 4, { allowAfterFinish: true })) {
+      sendUpdate();
+      return;
+    }
+
+    addScore(team, safePoint, { allowAfterFinish: true });
+
+    if (status === "FINISH") {
+      updateCurrentMatchResult();
+    }
+
+    sendUpdate();
   });
 
   socket.on("set-time", (seconds) => {
@@ -672,6 +806,8 @@ io.on("connection", (socket) => {
     scoreB = 0;
     shotA = "";
     shotB = "";
+    missionShotsA = ["", "", "", ""];
+    missionShotsB = ["", "", "", ""];
     timeElapsed = 0;
     status = "STOP";
     resetCurrentMatchSave();
