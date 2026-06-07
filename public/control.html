@@ -313,7 +313,7 @@
 
     .result-history-table {
       width: 100%;
-      min-width: 980px;
+      min-width: 1280px;
       border-collapse: collapse;
     }
 
@@ -340,8 +340,7 @@
       border-bottom: 0;
     }
 
-    .score-pill,
-    .save-mode {
+    .score-pill {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -352,6 +351,44 @@
       color: #fff8d6;
       font-weight: 900;
       white-space: nowrap;
+    }
+
+    .mission-history-cell {
+      min-width: 176px;
+    }
+
+    .mission-history-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 5px;
+    }
+
+    .mission-history-item {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      gap: 5px;
+      padding: 5px 6px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .mission-history-label {
+      color: #9fd6ff;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .mission-history-time {
+      color: var(--gold);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .mission-history-time.empty {
+      color: rgba(255, 255, 255, 0.42);
     }
 
     .history-action-cell {
@@ -381,14 +418,6 @@
 
     .history-delete-button {
       background: var(--red);
-    }
-
-    .save-mode.auto {
-      color: #50f091;
-    }
-
-    .save-mode.manual {
-      color: #ffe072;
     }
 
     .empty-history {
@@ -586,12 +615,13 @@
                 <th>ทีม A</th>
                 <th>WEIGHT A</th>
                 <th>SHOT A</th>
+                <th>ภารกิจ A</th>
                 <th>ผล</th>
                 <th>ทีม B</th>
                 <th>WEIGHT B</th>
                 <th>SHOT B</th>
+                <th>ภารกิจ B</th>
                 <th>ผู้ชนะ</th>
-                <th>บันทึก</th>
                 <th>เวลาบันทึก</th>
                 <th>จัดการ</th>
               </tr>
@@ -773,6 +803,36 @@
       return cell;
     }
 
+    function normalizeMissionTimes(value) {
+      const missionTimes = Array.isArray(value) ? value : [];
+      return [0, 1, 2, 3].map((index) => missionTimes[index] || "--.--");
+    }
+
+    function appendMissionCell(row, missionTimes) {
+      const cell = document.createElement("td");
+      cell.className = "mission-history-cell";
+      const grid = document.createElement("div");
+      grid.className = "mission-history-grid";
+
+      normalizeMissionTimes(missionTimes).forEach((time, index) => {
+        const item = document.createElement("div");
+        item.className = "mission-history-item";
+        const label = document.createElement("span");
+        label.className = "mission-history-label";
+        label.innerText = `ภ.${index + 1}`;
+        const value = document.createElement("span");
+        value.className = time === "--.--" ? "mission-history-time empty" : "mission-history-time";
+        value.innerText = time;
+        item.appendChild(label);
+        item.appendChild(value);
+        grid.appendChild(item);
+      });
+
+      cell.appendChild(grid);
+      row.appendChild(cell);
+      return cell;
+    }
+
     function printMatchResults(resultId) {
       const printableResults = resultId
         ? matchResults.filter((result) => result.id === resultId)
@@ -803,7 +863,10 @@
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 7px 8px; border: 1px solid #999; font-size: 11px; line-height: 1.25; text-align: left; vertical-align: middle; }
         th { background: #e8eef7; font-weight: 800; white-space: nowrap; }
-        .score-pill, .save-mode { font-weight: 800; white-space: nowrap; }
+        .score-pill { font-weight: 800; white-space: nowrap; }
+        .mission-history-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px; }
+        .mission-history-item { display: flex; gap: 4px; white-space: nowrap; }
+        .mission-history-label, .mission-history-time { font-weight: 800; }
       `;
       reportDocument.head.appendChild(style);
 
@@ -851,6 +914,7 @@
         appendTextCell(row, result.teamNameA || "TEAM A");
         appendTextCell(row, formatWeight(result.teamWeightA));
         appendTextCell(row, result.shotA || "--.--");
+        appendMissionCell(row, result.missionShotsA);
 
         const scoreCell = document.createElement("td");
         const scorePill = document.createElement("span");
@@ -862,15 +926,8 @@
         appendTextCell(row, result.teamNameB || "TEAM B");
         appendTextCell(row, formatWeight(result.teamWeightB));
         appendTextCell(row, result.shotB || "--.--");
+        appendMissionCell(row, result.missionShotsB);
         appendTextCell(row, getWinnerLabel(result));
-
-        const modeCell = document.createElement("td");
-        const modeBadge = document.createElement("span");
-        const mode = result.mode === "auto" ? "auto" : "manual";
-        modeBadge.className = `save-mode ${mode}`;
-        modeBadge.innerText = mode === "auto" ? "AUTO" : "MANUAL";
-        modeCell.appendChild(modeBadge);
-        row.appendChild(modeCell);
 
         appendTextCell(row, formatSavedAt(result.savedAt));
 
