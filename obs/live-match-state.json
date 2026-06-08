@@ -1,38 +1,38 @@
 {
-  "scoreA": 200,
-  "scoreB": 200,
-  "shotA": "00.20",
-  "shotB": "01.42",
+  "scoreA": 70,
+  "scoreB": 20,
+  "shotA": "",
+  "shotB": "",
   "missionShotsA": [
-    "00.11",
-    "00.14",
-    "00.16",
-    "00.20"
+    "",
+    "",
+    "",
+    ""
   ],
   "missionShotsB": [
-    "01.27",
-    "01.30",
-    "01.32",
-    "01.42"
+    "",
+    "",
+    "",
+    ""
   ],
   "recordedMissionShotsA": [
-    "00.11",
-    "00.14",
-    "00.16",
-    "00.20"
+    "",
+    "",
+    "",
+    ""
   ],
   "recordedMissionShotsB": [
-    "01.27",
-    "01.30",
-    "01.32",
-    "01.42"
+    "",
+    "",
+    "",
+    ""
   ],
   "teamNameA": "R-CAT ROBOT",
   "teamNameB": "RETC Roiet",
-  "timeElapsed": 180,
+  "timeElapsed": 0,
   "matchDuration": 180,
-  "status": "FINISH",
-  "currentMatchSaved": true,
-  "currentMatchSavedResultId": "1780890098498-d52c64",
-  "savedAt": "2026-06-08T03:46:17.815Z"
+  "status": "STOP",
+  "currentMatchSaved": false,
+  "currentMatchSavedResultId": "",
+  "savedAt": "2026-06-08T08:18:15.790Z"
 }
