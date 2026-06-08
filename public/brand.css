@@ -2,6 +2,12 @@
   --brand-red: #a70721;
   --brand-gold: #ffc94a;
   --brand-blue: #1e7bd7;
+  --team-a: #ff334f;
+  --team-a-dark: #5f0715;
+  --team-a-soft: rgba(255, 51, 79, 0.18);
+  --team-b: #35b7ff;
+  --team-b-dark: #073f72;
+  --team-b-soft: rgba(53, 183, 255, 0.18);
   --brand-seal-size: 160px;
   --surface: rgba(17, 21, 28, 0.9);
   --surface-strong: rgba(21, 27, 36, 0.96);
@@ -34,6 +40,32 @@ body::before {
 body > * {
   position: relative;
   z-index: 1;
+}
+
+body.team-a-page.scoreboard-page {
+  --accent: var(--team-a);
+  --accent-dark: var(--team-a-dark);
+  --brand-red: #c90d2d;
+  --brand-gold: #ffb45c;
+  --brand-blue: #6b1424;
+  --surface-strong: rgba(32, 9, 15, 0.96);
+  background:
+    radial-gradient(circle at 14% 12%, rgba(255, 51, 79, 0.34), transparent 31%),
+    radial-gradient(circle at 86% 8%, rgba(255, 180, 92, 0.16), transparent 27%),
+    linear-gradient(135deg, #170308 0%, #260711 48%, #100207 100%) !important;
+}
+
+body.team-b-page.scoreboard-page {
+  --accent: var(--team-b);
+  --accent-dark: var(--team-b-dark);
+  --brand-red: #0d3f7a;
+  --brand-gold: #75d7ff;
+  --brand-blue: #1489f6;
+  --surface-strong: rgba(6, 20, 38, 0.96);
+  background:
+    radial-gradient(circle at 14% 12%, rgba(53, 183, 255, 0.34), transparent 31%),
+    radial-gradient(circle at 86% 8%, rgba(117, 215, 255, 0.16), transparent 27%),
+    linear-gradient(135deg, #031021 0%, #061d38 48%, #020914 100%) !important;
 }
 
 .panel,
@@ -127,12 +159,38 @@ body > h1 {
   box-shadow: 0 0 18px var(--accent);
 }
 
+.live-score[data-side="A"] {
+  border-left-color: var(--team-a) !important;
+}
+
+.live-score[data-side="B"] {
+  border-left-color: var(--team-b) !important;
+}
+
 .score {
   border-color: var(--accent-dark, rgba(255, 201, 74, 0.3)) !important;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.015)),
     linear-gradient(90deg, rgba(255, 255, 255, 0.04), transparent 35%, rgba(255, 255, 255, 0.04)) !important;
   box-shadow: inset 0 0 35px rgba(255, 255, 255, 0.04), 0 0 28px rgba(255, 255, 255, 0.06) !important;
+}
+
+body.team-a-page.scoreboard-page .score {
+  color: var(--team-a);
+  text-shadow: 0 0 30px rgba(255, 51, 79, 0.38);
+  background:
+    linear-gradient(180deg, rgba(255, 51, 79, 0.13), rgba(255, 255, 255, 0.018)),
+    linear-gradient(90deg, rgba(255, 51, 79, 0.12), transparent 36%, rgba(255, 180, 92, 0.07)) !important;
+  box-shadow: inset 0 0 44px rgba(255, 51, 79, 0.11), 0 0 30px rgba(255, 51, 79, 0.14) !important;
+}
+
+body.team-b-page.scoreboard-page .score {
+  color: var(--team-b);
+  text-shadow: 0 0 30px rgba(53, 183, 255, 0.38);
+  background:
+    linear-gradient(180deg, rgba(53, 183, 255, 0.13), rgba(255, 255, 255, 0.018)),
+    linear-gradient(90deg, rgba(53, 183, 255, 0.12), transparent 36%, rgba(117, 215, 255, 0.07)) !important;
+  box-shadow: inset 0 0 44px rgba(53, 183, 255, 0.11), 0 0 30px rgba(53, 183, 255, 0.14) !important;
 }
 
 .time {
@@ -378,6 +436,38 @@ body.scoreboard-page .mission-button {
   min-height: 0;
   padding: clamp(6px, 1vh, 10px);
   font-size: clamp(18px, 2.8vh, 25px);
+}
+
+body.team-a-page.scoreboard-page .brand-strip,
+body.team-a-page.scoreboard-page .shot-readout,
+body.team-a-page.scoreboard-page .time {
+  border-color: rgba(255, 51, 79, 0.28);
+  background-color: rgba(255, 51, 79, 0.075);
+}
+
+body.team-b-page.scoreboard-page .brand-strip,
+body.team-b-page.scoreboard-page .shot-readout,
+body.team-b-page.scoreboard-page .time {
+  border-color: rgba(53, 183, 255, 0.28);
+  background-color: rgba(53, 183, 255, 0.075);
+}
+
+body.team-a-page.scoreboard-page .event-title strong,
+body.team-a-page.scoreboard-page .mission-label {
+  color: #ffd6dc;
+}
+
+body.team-b-page.scoreboard-page .event-title strong,
+body.team-b-page.scoreboard-page .mission-label {
+  color: #d6f1ff;
+}
+
+body.team-a-page.scoreboard-page .mission-button {
+  background: linear-gradient(180deg, #e22540, #8d1022);
+}
+
+body.team-b-page.scoreboard-page .mission-button {
+  background: linear-gradient(180deg, #159bf0, #075ca4);
 }
 
 body.scoreboard-page .mission-button span {

@@ -1,126 +1,33 @@
 [
   {
-    "id": "1780887503491-d1e380",
-    "matchNumber": 4,
-    "savedAt": "2026-06-08T02:58:23.491Z",
-    "mode": "auto",
-    "teamNameA": "ข้าวหอมมะลิ 101",
-    "teamNameB": "R-CAT ROBOT",
-    "teamWeightA": 20.6,
-    "teamWeightB": 12.5,
-    "scoreA": 30,
-    "scoreB": 0,
-    "shotA": "03.00",
-    "shotB": "03.00",
-    "missionShotsA": [
-      "",
-      "",
-      "",
-      ""
-    ],
-    "missionShotsB": [
-      "",
-      "",
-      "",
-      ""
-    ],
-    "elapsedSeconds": 180,
-    "elapsedTime": "03.00",
-    "matchDuration": 180,
-    "winner": "A",
-    "winnerName": "ข้าวหอมมะลิ 101"
-  },
-  {
-    "id": "1780879375730-fc2003",
-    "matchNumber": 3,
-    "savedAt": "2026-06-08T00:42:55.730Z",
-    "mode": "auto",
-    "teamNameA": "ข้าวหอมมะลิ 101",
-    "teamNameB": "RETC Roiet",
-    "teamWeightA": 20.6,
-    "teamWeightB": 23,
-    "scoreA": 140,
-    "scoreB": 200,
-    "shotA": "03.00",
-    "shotB": "01.00",
-    "missionShotsA": [
-      "00.14",
-      "",
-      "00.29",
-      ""
-    ],
-    "missionShotsB": [
-      "00.46",
-      "00.47",
-      "00.52",
-      "01.00"
-    ],
-    "elapsedSeconds": 180,
-    "elapsedTime": "03.00",
-    "matchDuration": 180,
-    "winner": "B",
-    "winnerName": "RETC Roiet"
-  },
-  {
-    "id": "1780878985016-cb7f3d",
-    "matchNumber": 2,
-    "savedAt": "2026-06-08T00:36:25.016Z",
+    "id": "1780890098498-d52c64",
+    "matchNumber": 1,
+    "savedAt": "2026-06-08T03:41:38.499Z",
     "mode": "auto",
     "teamNameA": "R-CAT ROBOT",
-    "teamNameB": "ข้าวหอมมะลิ 101",
+    "teamNameB": "RETC Roiet",
     "teamWeightA": 12.5,
-    "teamWeightB": 20.6,
-    "scoreA": 160,
-    "scoreB": 140,
-    "shotA": "01.08",
-    "shotB": "03.00",
+    "teamWeightB": 23,
+    "scoreA": 200,
+    "scoreB": 200,
+    "shotA": "00.20",
+    "shotB": "01.42",
     "missionShotsA": [
-      "",
-      "00.45",
-      "",
-      "01.08"
+      "00.11",
+      "00.14",
+      "00.16",
+      "00.20"
     ],
     "missionShotsB": [
-      "00.09",
-      "00.14",
-      "00.17",
-      ""
+      "01.27",
+      "01.30",
+      "01.32",
+      "01.42"
     ],
     "elapsedSeconds": 180,
     "elapsedTime": "03.00",
     "matchDuration": 180,
     "winner": "A",
     "winnerName": "R-CAT ROBOT"
-  },
-  {
-    "id": "1780855457804-56835f",
-    "matchNumber": 1,
-    "savedAt": "2026-06-07T18:04:17.805Z",
-    "mode": "auto",
-    "teamNameA": "R-CAT ROBOT",
-    "teamNameB": "ข้าวหอมมะลิ 101",
-    "teamWeightA": 12.5,
-    "teamWeightB": 20.6,
-    "scoreA": 0,
-    "scoreB": 170,
-    "shotA": "03.00",
-    "shotB": "03.00",
-    "missionShotsA": [
-      "",
-      "",
-      "",
-      ""
-    ],
-    "missionShotsB": [
-      "",
-      "00.24",
-      "00.49",
-      ""
-    ],
-    "elapsedSeconds": 180,
-    "elapsedTime": "03.00",
-    "matchDuration": 180,
-    "winner": "B",
-    "winnerName": "ข้าวหอมมะลิ 101"
   }
 ]
