@@ -463,9 +463,13 @@
 
     <div class="mission-button-grid">
       <button class="mission-button" data-mission="1" data-point="10"><span>ภารกิจ 1</span>+10</button>
+      <button class="mission-shot-button" data-shot-mission="1"><span>ภารกิจ 1</span>SHOT</button>
       <button class="mission-button" data-mission="2" data-point="20"><span>ภารกิจ 2</span>+20</button>
+      <button class="mission-shot-button" data-shot-mission="2"><span>ภารกิจ 2</span>SHOT</button>
       <button class="mission-button" data-mission="3" data-point="20"><span>ภารกิจ 3</span>+20</button>
+      <button class="mission-shot-button" data-shot-mission="3"><span>ภารกิจ 3</span>SHOT</button>
       <button class="mission-button end" id="endMatchButton"><span>ภารกิจ 4</span>+20 END</button>
+      <button class="mission-shot-button" data-shot-mission="4"><span>ภารกิจ 4</span>SHOT</button>
     </div>
 
     <div class="button-grid">
@@ -510,6 +514,15 @@
 
       document.querySelectorAll("[data-mission]").forEach((button) => {
         const missionIndex = Number(button.dataset.mission) - 1;
+        button.disabled = data.status === "FINISH" || missionShots[missionIndex] !== "";
+      });
+    }
+
+    function setMissionShotButtonsEnabled(data) {
+      const missionShots = Array.isArray(data.missionShotsA) ? data.missionShotsA : [];
+
+      document.querySelectorAll("[data-shot-mission]").forEach((button) => {
+        const missionIndex = Number(button.dataset.shotMission) - 1;
         button.disabled = data.status === "FINISH" || missionShots[missionIndex] !== "";
       });
     }
@@ -578,6 +591,15 @@
         });
       });
 
+      document.querySelectorAll("[data-shot-mission]").forEach((button) => {
+        button.addEventListener("click", () => {
+          socket.emit("mission-shot", {
+            team: "A",
+            mission: Number(button.dataset.shotMission)
+          });
+        });
+      });
+
       socket.on("connect", () => {
         setButtonsEnabled(true);
       });
@@ -597,6 +619,7 @@
         setTimerButtonsEnabled(data.status !== "FINISH");
         setPointButtonsEnabled(data.status !== "FINISH");
         setMissionButtonsEnabled(data);
+        setMissionShotButtonsEnabled(data);
         const recordedMissionShots = Array.isArray(data.recordedMissionShotsA) ? data.recordedMissionShotsA : data.missionShotsA;
         const missionFourRecorded = Array.isArray(recordedMissionShots) && recordedMissionShots[3] !== "";
         setEndButtonEnabled(!missionFourRecorded && (data.status === "FINISH" || data.shotA === ""));

@@ -1,6 +1,6 @@
 {
-  "scoreA": 70,
-  "scoreB": 20,
+  "scoreA": 0,
+  "scoreB": 0,
   "shotA": "",
   "shotB": "",
   "missionShotsA": [
@@ -27,12 +27,14 @@
     "",
     ""
   ],
-  "teamNameA": "R-CAT ROBOT",
-  "teamNameB": "RETC Roiet",
+  "teamNameA": "ข้าวหอมมะลิ 101",
+  "teamNameB": "บังไฟโก้",
+  "teamSchoolA": "วิทยาลัยเทคนิคร้อยเอ็ด",
+  "teamSchoolB": "วิทยาลัยเทคนิคยโส",
   "timeElapsed": 0,
   "matchDuration": 180,
   "status": "STOP",
   "currentMatchSaved": false,
   "currentMatchSavedResultId": "",
-  "savedAt": "2026-06-08T08:18:15.790Z"
+  "savedAt": "2026-06-10T09:35:54.929Z"
 }

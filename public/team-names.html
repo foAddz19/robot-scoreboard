@@ -686,6 +686,7 @@
             <div class="current-team">
               <span>TEAM A</span>
               <strong id="currentTeamA">TEAM A</strong>
+              <small id="currentTeamSchoolA">SCHOOL -</small>
               <small id="currentTeamWeightA">WEIGHT -</small>
             </div>
             <label for="teamASelect">เลือกชื่อทีม A</label>
@@ -696,6 +697,7 @@
             <div class="current-team">
               <span>TEAM B</span>
               <strong id="currentTeamB">TEAM B</strong>
+              <small id="currentTeamSchoolB">SCHOOL -</small>
               <small id="currentTeamWeightB">WEIGHT -</small>
             </div>
             <label for="teamBSelect">เลือกชื่อทีม B</label>
@@ -765,8 +767,10 @@
           <h2>เพิ่มชื่อทีม</h2>
           <label for="addTeamName">ชื่อทีมใหม่</label>
           <input id="addTeamName" type="text" autocomplete="off" maxlength="80" placeholder="พิมพ์ชื่อทีม">
+          <label for="addTeamSchool">ชื่อสถานศึกษา</label>
+          <input id="addTeamSchool" type="text" autocomplete="off" maxlength="120" placeholder="พิมพ์ชื่อสถานศึกษา">
           <label for="addTeamWeight">น้ำหนัก ROBOT (kg)</label>
-          <input id="addTeamWeight" type="number" min="0.001" step="0.001" placeholder="เช่น 12.5" required>
+          <input id="addTeamWeight" type="number" min="0.1" step="0.1" placeholder="เช่น 12.5">
           <button class="green" type="submit">เพิ่มทีม</button>
         </form>
       </section>
@@ -778,8 +782,10 @@
           <select id="editTeamSelect"></select>
           <label for="editTeamName">แก้ไขชื่อ</label>
           <input id="editTeamName" type="text" autocomplete="off" maxlength="80" placeholder="พิมพ์ชื่อใหม่">
+          <label for="editTeamSchool">ชื่อสถานศึกษา</label>
+          <input id="editTeamSchool" type="text" autocomplete="off" maxlength="120" placeholder="พิมพ์ชื่อสถานศึกษา">
           <label for="editTeamWeight">น้ำหนัก ROBOT (kg)</label>
-          <input id="editTeamWeight" type="number" min="0.001" step="0.001" placeholder="เช่น 12.5" required>
+          <input id="editTeamWeight" type="number" min="0.1" step="0.1" placeholder="เช่น 12.5">
           <div class="action-row">
             <button class="orange" type="submit">บันทึก</button>
             <button class="red" id="deleteTeamButton" type="button">ลบทีม</button>
@@ -829,8 +835,10 @@
     const teamBSelect = document.getElementById("teamBSelect");
     const editTeamSelect = document.getElementById("editTeamSelect");
     const editTeamName = document.getElementById("editTeamName");
+    const editTeamSchool = document.getElementById("editTeamSchool");
     const editTeamWeight = document.getElementById("editTeamWeight");
     const addTeamName = document.getElementById("addTeamName");
+    const addTeamSchool = document.getElementById("addTeamSchool");
     const addTeamWeight = document.getElementById("addTeamWeight");
     const deleteTeamButton = document.getElementById("deleteTeamButton");
     const showTeamNamesButton = document.getElementById("showTeamNamesButton");
@@ -848,6 +856,7 @@
 
     let teamNames = ["TEAM A", "TEAM B"];
     let teamWeights = {};
+    let teamSchools = {};
     let teamNameA = "TEAM A";
     let teamNameB = "TEAM B";
     let teamNamesVisible = true;
@@ -864,16 +873,32 @@
       return String(value || "").trim().replace(/\s+/g, " ").slice(0, 80);
     }
 
+    function cleanSchool(value) {
+      return String(value || "").trim().replace(/\s+/g, " ").slice(0, 120);
+    }
+
+    function formatSchool(value) {
+      return cleanSchool(value) || "-";
+    }
+
     function cleanWeight(value) {
       if (value === "" || value === null || value === undefined) return null;
 
       const weight = Number(value);
-      return Number.isFinite(weight) && weight > 0 ? weight : null;
+      if (!Number.isFinite(weight) || weight <= 0) return null;
+
+      const roundedWeight = Math.round(weight * 10) / 10;
+      return roundedWeight > 0 ? roundedWeight : null;
     }
 
     function formatWeight(value) {
       const weight = cleanWeight(value);
-      return weight === null ? "-" : `${weight} kg`;
+      return weight === null ? "-" : `${weight.toFixed(1)} kg`;
+    }
+
+    function formatWeightInput(value) {
+      const weight = cleanWeight(value);
+      return weight === null ? "" : weight.toFixed(1);
     }
 
     function setControlsEnabled(enabled) {
@@ -1202,8 +1227,9 @@
 
       teamNames.forEach((teamName) => {
         const option = document.createElement("option");
+        const school = formatSchool(teamSchools[teamName]);
         option.value = teamName;
-        option.innerText = `${teamName} (${formatWeight(teamWeights[teamName])})`;
+        option.innerText = `${teamName} (${school} / ${formatWeight(teamWeights[teamName])})`;
         select.appendChild(option);
       });
 
@@ -1219,12 +1245,15 @@
         ? data.teamNames
         : ["TEAM A", "TEAM B"];
       teamWeights = data.teamWeights && typeof data.teamWeights === "object" ? data.teamWeights : {};
+      teamSchools = data.teamSchools && typeof data.teamSchools === "object" ? data.teamSchools : {};
       teamNameA = data.teamNameA || "TEAM A";
       teamNameB = data.teamNameB || "TEAM B";
       teamNamesVisible = data.teamNamesVisible !== false;
 
       document.getElementById("currentTeamA").innerText = teamNameA;
       document.getElementById("currentTeamB").innerText = teamNameB;
+      document.getElementById("currentTeamSchoolA").innerText = `SCHOOL ${formatSchool(data.teamSchoolA || teamSchools[teamNameA])}`;
+      document.getElementById("currentTeamSchoolB").innerText = `SCHOOL ${formatSchool(data.teamSchoolB || teamSchools[teamNameB])}`;
       document.getElementById("currentTeamWeightA").innerText = `WEIGHT ${formatWeight(data.teamWeightA)}`;
       document.getElementById("currentTeamWeightB").innerText = `WEIGHT ${formatWeight(data.teamWeightB)}`;
       document.getElementById("textPreviewA").innerText = teamNamesVisible ? teamNameA : "";
@@ -1236,7 +1265,8 @@
 
       if (!editIsDirty) {
         editTeamName.value = editTeamSelect.value || "";
-        editTeamWeight.value = cleanWeight(teamWeights[editTeamSelect.value]) || "";
+        editTeamSchool.value = teamSchools[editTeamSelect.value] || "";
+        editTeamWeight.value = formatWeightInput(teamWeights[editTeamSelect.value]);
       }
 
       deleteTeamButton.disabled = teamNames.length <= 1;
@@ -1297,14 +1327,16 @@
       document.getElementById("addTeamForm").addEventListener("submit", (event) => {
         event.preventDefault();
         const name = cleanName(addTeamName.value);
+        const school = cleanSchool(addTeamSchool.value);
         const weight = cleanWeight(addTeamWeight.value);
-        if (!name || weight === null) {
-          showStatus("กรุณาพิมพ์ชื่อทีมและน้ำหนัก ROBOT");
+        if (!name) {
+          showStatus("กรุณาพิมพ์ชื่อทีม");
           return;
         }
 
-        socket.emit("team-name-add", { name, weight });
+        socket.emit("team-name-add", { name, school, weight });
         addTeamName.value = "";
+        addTeamSchool.value = "";
         addTeamWeight.value = "";
         showStatus("เพิ่มชื่อทีมแล้ว");
       });
@@ -1312,10 +1344,15 @@
       editTeamSelect.addEventListener("change", () => {
         editIsDirty = false;
         editTeamName.value = editTeamSelect.value || "";
-        editTeamWeight.value = cleanWeight(teamWeights[editTeamSelect.value]) || "";
+        editTeamSchool.value = teamSchools[editTeamSelect.value] || "";
+        editTeamWeight.value = formatWeightInput(teamWeights[editTeamSelect.value]);
       });
 
       editTeamName.addEventListener("input", () => {
+        editIsDirty = true;
+      });
+
+      editTeamSchool.addEventListener("input", () => {
         editIsDirty = true;
       });
 
@@ -1327,15 +1364,17 @@
         event.preventDefault();
         const oldName = editTeamSelect.value;
         const newName = cleanName(editTeamName.value);
+        const school = cleanSchool(editTeamSchool.value);
         const weight = cleanWeight(editTeamWeight.value);
-        if (!oldName || !newName || weight === null) {
-          showStatus("กรุณาเลือกทีม พิมพ์ชื่อ และน้ำหนัก ROBOT");
+        if (!oldName || !newName) {
+          showStatus("กรุณาเลือกทีมและพิมพ์ชื่อ");
           return;
         }
 
         socket.emit("team-name-edit", {
           oldName,
           newName,
+          school,
           weight
         });
         editIsDirty = false;

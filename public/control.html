@@ -759,12 +759,15 @@
       if (value === "" || value === null || value === undefined) return null;
 
       const weight = Number(value);
-      return Number.isFinite(weight) && weight > 0 ? weight : null;
+      if (!Number.isFinite(weight) || weight <= 0) return null;
+
+      const roundedWeight = Math.round(weight * 10) / 10;
+      return roundedWeight > 0 ? roundedWeight : null;
     }
 
     function formatWeight(value) {
       const weight = cleanWeight(value);
-      return weight === null ? "-" : `${weight} kg`;
+      return weight === null ? "-" : `${weight.toFixed(1)} kg`;
     }
 
     function getWinnerLabel(result) {

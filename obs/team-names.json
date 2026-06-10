@@ -1,15 +1,21 @@
 {
   "teamNames": [
-    "R-CAT ROBOT",
+    "test",
     "ข้าวหอมมะลิ 101",
-    "RETC Roiet"
+    "zxc",
+    "บังไฟโก้"
   ],
   "teamWeights": {
-    "R-CAT ROBOT": 12.5,
-    "ข้าวหอมมะลิ 101": 20.6,
-    "RETC Roiet": 23
+    "test": 22,
+    "ข้าวหอมมะลิ 101": 15,
+    "zxc": 12,
+    "บังไฟโก้": 27.2
   },
-  "teamNameA": "R-CAT ROBOT",
-  "teamNameB": "RETC Roiet",
+  "teamSchools": {
+    "ข้าวหอมมะลิ 101": "วิทยาลัยเทคนิคร้อยเอ็ด",
+    "บังไฟโก้": "วิทยาลัยเทคนิคยโส"
+  },
+  "teamNameA": "ข้าวหอมมะลิ 101",
+  "teamNameB": "บังไฟโก้",
   "teamNamesVisible": true
 }

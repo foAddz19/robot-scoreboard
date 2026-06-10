@@ -2,9 +2,9 @@
   --brand-red: #a70721;
   --brand-gold: #ffc94a;
   --brand-blue: #1e7bd7;
-  --team-a: #f31c39;
-  --team-a-dark: #940923;
-  --team-a-soft: rgba(243, 99, 119, 0.18);
+  --team-a: #ea5a6d;
+  --team-a-dark: #5f0715;
+  --team-a-soft: rgba(255, 51, 79, 0.18);
   --team-b: #35b7ff;
   --team-b-dark: #073f72;
   --team-b-soft: rgba(53, 183, 255, 0.18);
@@ -261,11 +261,11 @@ body.scoreboard-page {
 body.scoreboard-page .panel {
   --scoreboard-control-gap: clamp(10px, 1.4vh, 14px);
   --scoreboard-radius: 8px;
-  width: min(100%, 1220px);
+  width: min(100%, 1320px);
   height: calc(100dvh - clamp(8px, 2vh, 18px) * 2);
   max-height: 920px;
   display: grid;
-  grid-template-columns: minmax(0, 1.18fr) repeat(3, minmax(86px, 0.22fr)) minmax(112px, 0.22fr);
+  grid-template-columns: minmax(0, 1.18fr) repeat(3, minmax(86px, 0.22fr)) minmax(112px, 0.22fr) minmax(126px, 0.25fr);
   grid-template-rows: auto minmax(92px, 13vh) minmax(78px, 10vh) minmax(62px, 0.68fr) minmax(138px, 1.6fr) minmax(58px, 0.68fr);
   column-gap: var(--scoreboard-control-gap);
   row-gap: var(--scoreboard-control-gap);
@@ -337,7 +337,7 @@ body.scoreboard-page .mission-shot-grid {
 }
 
 body.scoreboard-page .time {
-  grid-column: 2 / 6;
+  grid-column: 2 / 7;
   grid-row: 2;
   display: grid;
   place-items: center;
@@ -364,7 +364,7 @@ body.scoreboard-page .time.final-warning {
 }
 
 body.scoreboard-page .shot-readout {
-  grid-column: 2 / 6;
+  grid-column: 2 / 7;
   grid-row: 3;
   display: grid;
   grid-template-rows: auto auto;
@@ -403,11 +403,11 @@ body.scoreboard-page .timer-grid {
 }
 
 body.scoreboard-page .mission-button-grid {
-  grid-column: 5;
+  grid-column: 5 / 7;
   grid-row: 4 / -1;
   align-self: stretch;
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(112px, 0.95fr) minmax(126px, 1.05fr);
   grid-template-rows: repeat(4, minmax(0, 1fr));
   gap: var(--scoreboard-control-gap);
   height: 100%;
@@ -436,6 +436,36 @@ body.scoreboard-page .mission-button {
   min-height: 0;
   padding: clamp(6px, 1vh, 10px);
   font-size: clamp(18px, 2.8vh, 25px);
+}
+
+body.scoreboard-page .mission-shot-button {
+  display: grid;
+  grid-template-rows: auto auto;
+  align-content: center;
+  justify-items: center;
+  row-gap: clamp(4px, 0.8vh, 8px);
+  min-height: 0;
+  height: 100%;
+  padding: clamp(6px, 1vh, 10px);
+  border: 1px solid rgba(255, 204, 0, 0.3);
+  border-radius: var(--scoreboard-radius);
+  background:
+    linear-gradient(180deg, rgba(255, 204, 0, 0.15), rgba(255, 204, 0, 0.04)),
+    rgba(12, 16, 22, 0.76);
+  color: var(--gold, var(--brand-gold));
+  font-size: clamp(18px, 2.8vh, 25px);
+  font-weight: 900;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+body.scoreboard-page .mission-shot-button span {
+  color: #fff8d6;
+  font-size: clamp(10px, 1.9vh, 14px);
+  line-height: 1;
+  white-space: nowrap;
 }
 
 body.team-a-page.scoreboard-page .brand-strip,
@@ -585,6 +615,10 @@ body.scoreboard-page .reset {
     font-size: 18px;
   }
 
+  body.scoreboard-page .mission-shot-button {
+    font-size: 18px;
+  }
+
   body.scoreboard-page .reset {
     min-height: 36px;
     font-size: 16px;
@@ -679,6 +713,10 @@ body.scoreboard-page .reset {
 
   body.scoreboard-page button {
     min-height: 28px;
+    font-size: 15px;
+  }
+
+  body.scoreboard-page .mission-shot-button {
     font-size: 15px;
   }
 

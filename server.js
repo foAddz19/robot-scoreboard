@@ -30,6 +30,7 @@ let missionShotsA = ["", "", "", ""];
 let missionShotsB = ["", "", "", ""];
 let teamNames = ["TEAM A", "TEAM B"];
 let teamWeights = {};
+let teamSchools = {};
 let teamNameA = "TEAM A";
 let teamNameB = "TEAM B";
 let teamNamesVisible = true;
@@ -56,11 +57,18 @@ function cleanTeamName(value) {
   return String(value || "").trim().replace(/\s+/g, " ").slice(0, 80);
 }
 
+function cleanSchoolName(value) {
+  return String(value || "").trim().replace(/\s+/g, " ").slice(0, 120);
+}
+
 function normalizeTeamWeight(value) {
   if (value === "" || value === null || value === undefined) return null;
 
   const weight = Number(value);
-  return Number.isFinite(weight) && weight > 0 ? weight : null;
+  if (!Number.isFinite(weight) || weight <= 0) return null;
+
+  const roundedWeight = Math.round(weight * 10) / 10;
+  return roundedWeight > 0 ? roundedWeight : null;
 }
 
 function normalizeMissionShots(value) {
@@ -86,12 +94,35 @@ function getTeamWeight(name) {
   return cleanName ? normalizeTeamWeight(teamWeights[cleanName]) : null;
 }
 
+function getTeamSchool(name) {
+  const cleanName = cleanTeamName(name);
+  return cleanName ? cleanSchoolName(teamSchools[cleanName]) : "";
+}
+
 function setTeamWeight(name, weight) {
   const cleanName = cleanTeamName(name);
   const safeWeight = normalizeTeamWeight(weight);
-  if (!cleanName || safeWeight === null) return;
+  if (!cleanName) return;
+
+  if (safeWeight === null) {
+    delete teamWeights[cleanName];
+    return;
+  }
 
   teamWeights[cleanName] = safeWeight;
+}
+
+function setTeamSchool(name, school) {
+  const cleanName = cleanTeamName(name);
+  const cleanSchool = cleanSchoolName(school);
+  if (!cleanName) return;
+
+  if (!cleanSchool) {
+    delete teamSchools[cleanName];
+    return;
+  }
+
+  teamSchools[cleanName] = cleanSchool;
 }
 
 function findTeamNameIndex(name) {
@@ -136,7 +167,9 @@ function loadTeamNameData() {
       const savedData = JSON.parse(fs.readFileSync(teamDataFile, "utf8"));
       normalizeTeamList(savedData.teamNames);
       teamWeights = {};
+      teamSchools = {};
       teamNames.forEach((teamName) => setTeamWeight(teamName, savedData.teamWeights && savedData.teamWeights[teamName]));
+      teamNames.forEach((teamName) => setTeamSchool(teamName, savedData.teamSchools && savedData.teamSchools[teamName]));
       teamNameA = cleanTeamName(savedData.teamNameA) || teamNames[0] || "TEAM A";
       teamNameB = cleanTeamName(savedData.teamNameB) || teamNames[1] || teamNames[0] || "TEAM B";
       teamNamesVisible = typeof savedData.teamNamesVisible === "boolean" ? savedData.teamNamesVisible : true;
@@ -158,6 +191,7 @@ function saveTeamNameData() {
   const data = {
     teamNames,
     teamWeights,
+    teamSchools,
     teamNameA,
     teamNameB,
     teamNamesVisible,
@@ -194,6 +228,8 @@ function saveLiveMatchState() {
     recordedMissionShotsB: normalizeRecordedMissionShots(missionShotsB),
     teamNameA,
     teamNameB,
+    teamSchoolA: getTeamSchool(teamNameA),
+    teamSchoolB: getTeamSchool(teamNameB),
     timeElapsed,
     matchDuration,
     status,
@@ -383,6 +419,8 @@ function getCurrentMatchResultFields() {
     teamNameB,
     teamWeightA: getTeamWeight(teamNameA),
     teamWeightB: getTeamWeight(teamNameB),
+    teamSchoolA: getTeamSchool(teamNameA),
+    teamSchoolB: getTeamSchool(teamNameB),
     scoreA,
     scoreB,
     shotA,
@@ -480,7 +518,7 @@ function setTeamName(team, name) {
   sendUpdate();
 }
 
-function editTeamName(oldName, newName, weight) {
+function editTeamName(oldName, newName, weight, school) {
   const cleanOldName = cleanTeamName(oldName);
   const cleanNewName = cleanTeamName(newName);
   const index = findTeamNameIndex(cleanOldName);
@@ -489,17 +527,26 @@ function editTeamName(oldName, newName, weight) {
 
   const duplicateIndex = findTeamNameIndex(cleanNewName);
   if (duplicateIndex !== -1 && duplicateIndex !== index) {
-    setTeamWeight(teamNames[duplicateIndex], weight);
+    if (weight !== undefined) {
+      setTeamWeight(teamNames[duplicateIndex], weight);
+    }
+    if (school !== undefined) {
+      setTeamSchool(teamNames[duplicateIndex], school);
+    }
     if (teamNameA === teamNames[index]) teamNameA = teamNames[duplicateIndex];
     if (teamNameB === teamNames[index]) teamNameB = teamNames[duplicateIndex];
     delete teamWeights[teamNames[index]];
+    delete teamSchools[teamNames[index]];
     teamNames.splice(index, 1);
   } else {
     const previousName = teamNames[index];
     teamNames[index] = cleanNewName;
     const previousWeight = getTeamWeight(previousName);
+    const previousSchool = getTeamSchool(previousName);
     delete teamWeights[previousName];
+    delete teamSchools[previousName];
     setTeamWeight(cleanNewName, weight === undefined ? previousWeight : weight);
+    setTeamSchool(cleanNewName, school === undefined ? previousSchool : school);
     if (teamNameA === previousName) teamNameA = cleanNewName;
     if (teamNameB === previousName) teamNameB = cleanNewName;
   }
@@ -516,6 +563,7 @@ function deleteTeamName(name) {
   const deletedName = teamNames[index];
   teamNames.splice(index, 1);
   delete teamWeights[deletedName];
+  delete teamSchools[deletedName];
 
   if (teamNameA === deletedName) {
     teamNameA = teamNames.find((teamName) => teamName !== teamNameB) || teamNames[0] || "TEAM A";
@@ -550,6 +598,8 @@ function writeObsFiles() {
   fs.writeFileSync(path.join(obsDir, "status.txt"), status);
   fs.writeFileSync(path.join(obsDir, "team-name-a.text"), teamNamesVisible ? teamNameA : "");
   fs.writeFileSync(path.join(obsDir, "team-name-b.text"), teamNamesVisible ? teamNameB : "");
+  fs.writeFileSync(path.join(obsDir, "nameschool-a.text"), teamNamesVisible ? getTeamSchool(teamNameA) : "");
+  fs.writeFileSync(path.join(obsDir, "nameschool-b.text"), teamNamesVisible ? getTeamSchool(teamNameB) : "");
 }
 
 function sendUpdate() {
@@ -565,10 +615,13 @@ function sendUpdate() {
     recordedMissionShotsB: normalizeRecordedMissionShots(missionShotsB),
     teamNames,
     teamWeights,
+    teamSchools,
     teamNameA,
     teamNameB,
     teamWeightA: getTeamWeight(teamNameA),
     teamWeightB: getTeamWeight(teamNameB),
+    teamSchoolA: getTeamSchool(teamNameA),
+    teamSchoolB: getTeamSchool(teamNameB),
     teamNamesVisible,
     matchResults,
     currentMatchSaved,
@@ -760,6 +813,19 @@ io.on("connection", (socket) => {
     sendUpdate();
   });
 
+  socket.on("mission-shot", (data) => {
+    const team = data && data.team;
+    const mission = Number(data && data.mission);
+
+    if (!Number.isFinite(mission) || mission < 1 || mission > 4) {
+      sendUpdate();
+      return;
+    }
+
+    recordMissionShot(team, mission);
+    sendUpdate();
+  });
+
   socket.on("end-with-bonus", (data) => {
     const team = data.team;
     const point = Number(data.point);
@@ -834,14 +900,21 @@ io.on("connection", (socket) => {
   socket.on("team-name-add", (data) => {
     const teamName = addTeamNameToList(data && data.name);
     if (teamName) {
-      setTeamWeight(teamName, data && data.weight);
+      const weight = normalizeTeamWeight(data && data.weight);
+      if (weight !== null) {
+        setTeamWeight(teamName, weight);
+      }
+      const school = cleanSchoolName(data && data.school);
+      if (school) {
+        setTeamSchool(teamName, school);
+      }
       saveTeamNameData();
       sendUpdate();
     }
   });
 
   socket.on("team-name-edit", (data) => {
-    editTeamName(data && data.oldName, data && data.newName, data && data.weight);
+    editTeamName(data && data.oldName, data && data.newName, data && data.weight, data && data.school);
   });
 
   socket.on("team-name-select", (data) => {
